@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="Reqnroll.xunit.v3" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Shouldly" />
+  </ItemGroup>
+
+  <!-- The handlers under test and nothing else: every port is an in-memory fake in Support/Fakes. -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\application\EventStorming.Identity\EventStorming.Identity.csproj" />
+    <ProjectReference Include="..\..\src\application\EventStorming.Teams\EventStorming.Teams.csproj" />
+    <ProjectReference Include="..\..\src\application\EventStorming.BoardModelling\EventStorming.BoardModelling.csproj" />
+    <ProjectReference Include="..\..\src\application\EventStorming.Collaboration\EventStorming.Collaboration.csproj" />
+    <ProjectReference Include="..\..\src\application\EventStorming.PublicIntegration\EventStorming.PublicIntegration.csproj" />
+  </ItemGroup>
+
+</Project>

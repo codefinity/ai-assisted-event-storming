@@ -1,0 +1,84 @@
+name: eventstorming
+
+# `docker compose up` starts the whole stack: MongoDB, Mailpit, the API and the web app.
+# `docker compose run --rm api seed` creates a demo account, team and sample board.
+# No secrets live here: the API generates a development signing key into the `keys` volume on first
+# start. Copy .env.example to .env to override anything.
+
+services:
+  mongo:
+    image: mongo:8.0
+    # A single-node replica set: the API uses multi-document transactions, which need one.
+    command: ["--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "127.0.0.1:${MONGO_PORT:-27018}:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      # Initiates the replica set on first start, then reports healthy once it has a primary.
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --eval
+        - "try { rs.status().ok } catch (e) { rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: 'mongo:27017' }] }).ok }"
+      interval: 5s
+      timeout: 10s
+      retries: 30
+      start_period: 5s
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "127.0.0.1:${MAILPIT_UI_PORT:-8025}:8025"
+    restart: unless-stopped
+
+  api:
+    build:
+      # The repository root: the API embeds docs/examples for the seed command.
+      context: .
+      dockerfile: server/Dockerfile
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${API_ENVIRONMENT:-Development}
+      ASPNETCORE_URLS: http://+:8080
+      Mongo__ConnectionString: mongodb://mongo:27017/?replicaSet=rs0
+      Mongo__Database: ${MONGO_DATABASE:-eventstorming}
+      Jwt__SigningKey: ${JWT_SIGNING_KEY:-}
+      Keys__Directory: /keys
+      Cors__AllowedOrigins__0: ${WEB_ORIGIN:-http://localhost:3000}
+      Smtp__Host: mailpit
+      Smtp__Port: "1025"
+      WebApp__BaseUrl: ${WEB_ORIGIN:-http://localhost:3000}
+      RestApi__SecureCookies: "false"
+      SEED_DEMO_PASSWORD: ${SEED_DEMO_PASSWORD:-}
+    ports:
+      - "127.0.0.1:${API_PORT:-5080}:8080"
+    volumes:
+      - keys:/keys
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${PUBLIC_API_URL:-http://localhost:5080}
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${WEB_PORT:-3000}:3000"
+    restart: unless-stopped
+
+volumes:
+  mongo-data:
+  keys:

@@ -1,0 +1,31 @@
+<Solution>
+  <Folder Name="/application/">
+    <Project Path="src/application/EventStorming.SharedKernel/EventStorming.SharedKernel.csproj" />
+    <Project Path="src/application/EventStorming.Identity/EventStorming.Identity.csproj" />
+    <Project Path="src/application/EventStorming.Teams/EventStorming.Teams.csproj" />
+    <Project Path="src/application/EventStorming.BoardModelling/EventStorming.BoardModelling.csproj" />
+    <Project Path="src/application/EventStorming.Collaboration/EventStorming.Collaboration.csproj" />
+    <Project Path="src/application/EventStorming.PublicIntegration/EventStorming.PublicIntegration.csproj" />
+  </Folder>
+  <Folder Name="/driving-adapters/">
+    <Project Path="src/driving-adapters/EventStorming.Host/EventStorming.Host.csproj" />
+    <Project Path="src/driving-adapters/EventStorming.Api.Rest/EventStorming.Api.Rest.csproj" />
+    <Project Path="src/driving-adapters/EventStorming.Realtime.SignalR/EventStorming.Realtime.SignalR.csproj" />
+  </Folder>
+  <Folder Name="/driven-adapters/">
+    <Project Path="src/driven-adapters/EventStorming.Persistence.MongoDb/EventStorming.Persistence.MongoDb.csproj" />
+    <Project Path="src/driven-adapters/EventStorming.Security/EventStorming.Security.csproj" />
+    <Project Path="src/driven-adapters/EventStorming.SystemClock/EventStorming.SystemClock.csproj" />
+    <Project Path="src/driven-adapters/EventStorming.Email.Smtp/EventStorming.Email.Smtp.csproj" />
+    <Project Path="src/driven-adapters/EventStorming.ElementTypes.Json/EventStorming.ElementTypes.Json.csproj" />
+    <Project Path="src/driven-adapters/EventStorming.Presence.InMemory/EventStorming.Presence.InMemory.csproj" />
+    <Project Path="src/driven-adapters/EventStorming.Broadcasting/EventStorming.Broadcasting.csproj" />
+    <Project Path="src/driven-adapters/EventStorming.Broadcasting.Transport/EventStorming.Broadcasting.Transport.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/EventStorming.Specs/EventStorming.Specs.csproj" />
+    <Project Path="tests/EventStorming.Architecture.Tests/EventStorming.Architecture.Tests.csproj" />
+    <Project Path="tests/EventStorming.Persistence.MongoDb.IntegrationTests/EventStorming.Persistence.MongoDb.IntegrationTests.csproj" />
+    <Project Path="tests/EventStorming.Host.IntegrationTests/EventStorming.Host.IntegrationTests.csproj" />
+  </Folder>
+</Solution>

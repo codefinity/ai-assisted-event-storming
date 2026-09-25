@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://eventstorming.local/schemas/board-document.v1.json",
+  "title": "EventStorming Board Document, version 1",
+  "description": "A whole EventStorming board in one document. Array order of 'elements' is timeline order (left to right). Positions are optional: anything without one is laid out automatically.",
+  "type": "object",
+  "properties": {
+    "version": {
+      "description": "Format version. Always 1.",
+      "const": 1
+    },
+    "board": {
+      "description": "The board's name and level. Required when creating a board; when replacing, the name is optional and the level must match.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "Ignored on import; present in exports.",
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "description": "The board's name, e.g. \"Online food ordering\".",
+          "type": "string"
+        },
+        "level": {
+          "description": "One of: big-picture, process-modelling, software-design.",
+          "type": "string",
+          "enum": [
+            "big-picture",
+            "process-modelling",
+            "software-design"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "elements": {
+      "description": "Every element on the board, in timeline order.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "description": "Your own name for this element, unique within the document, so other elements and connections can refer to it. Example: \"order-placed\".",
+            "type": "string"
+          },
+          "type": {
+            "description": "An element type id from GET /api/v1/element-types, e.g. \"domain-event\".",
+            "type": "string",
+            "enum": [
+              "domain-event",
+              "command",
+              "actor",
+              "policy",
+              "read-model",
+              "external-system",
+              "aggregate",
+              "hot-spot",
+              "opportunity",
+              "swimlane",
+              "boundary"
+            ]
+          },
+          "text": {
+            "description": "What the sticky says. Domain Events in past tense: \"Order Placed\".",
+            "type": "string"
+          },
+          "position": {
+            "description": "Top-left corner in board coordinates. Leave out to have the element placed on the timeline automatically.",
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number"
+              },
+              "y": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "x",
+              "y"
+            ],
+            "additionalProperties": false
+          },
+          "size": {
+            "description": "Leave out to use the type's default size.",
+            "type": "object",
+            "properties": {
+              "width": {
+                "type": "number"
+              },
+              "height": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "width",
+              "height"
+            ],
+            "additionalProperties": false
+          },
+          "swimlane": {
+            "description": "Key of a 'swimlane' element this element sits in.",
+            "type": "string"
+          },
+          "boundary": {
+            "description": "Key of a 'boundary' element (a bounded context) this element belongs to.",
+            "type": "string"
+          },
+          "anchor": {
+            "description": "Key of another element to stack this one below, in the same column - e.g. a Hot Spot under the event it questions.",
+            "type": "string"
+          },
+          "pivotal": {
+            "description": "Marks a pivotal Domain Event - a turning point of the story. Only for domain-event.",
+            "type": "boolean"
+          },
+          "color": {
+            "description": "Optional color override as #RRGGBB. Leave out to use the type's color.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "type"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "connections": {
+      "description": "Optional arrows between elements, referring to element keys.",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "description": "Key of the element the arrow starts at.",
+            "type": "string"
+          },
+          "to": {
+            "description": "Key of the element the arrow points to.",
+            "type": "string"
+          },
+          "label": {
+            "description": "Optional label on the arrow.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "from",
+          "to"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\application\EventStorming.Identity\EventStorming.Identity.csproj" />
+    <ProjectReference Include="..\..\application\EventStorming.Teams\EventStorming.Teams.csproj" />
+    <ProjectReference Include="..\..\application\EventStorming.BoardModelling\EventStorming.BoardModelling.csproj" />
+    <ProjectReference Include="..\..\application\EventStorming.Collaboration\EventStorming.Collaboration.csproj" />
+    <ProjectReference Include="..\..\application\EventStorming.PublicIntegration\EventStorming.PublicIntegration.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="EventStorming.Persistence.MongoDb.IntegrationTests" />
+  </ItemGroup>
+
+</Project>

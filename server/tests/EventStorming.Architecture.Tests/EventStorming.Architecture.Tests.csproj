@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <PackageReference Include="TngTech.ArchUnitNET.xUnitV3" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <!--
+    Every project under src is part of the architecture under test, picked up with no edits here: a
+    ProjectReference copies each assembly next to this one, where Foundation/Solution.cs loads it.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\**\*.csproj" />
+  </ItemGroup>
+
+</Project>

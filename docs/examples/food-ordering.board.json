@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "board": { "name": "Online food ordering", "level": "big-picture" },
+  "elements": [
+    { "key": "lane-customer", "type": "swimlane", "text": "Customer" },
+    { "key": "lane-restaurant", "type": "swimlane", "text": "Restaurant" },
+    { "key": "lane-courier", "type": "swimlane", "text": "Courier" },
+
+    { "key": "ctx-ordering", "type": "boundary", "text": "Ordering" },
+    { "key": "ctx-kitchen", "type": "boundary", "text": "Kitchen" },
+    { "key": "ctx-delivery", "type": "boundary", "text": "Delivery" },
+
+    { "key": "customer", "type": "actor", "text": "Customer", "swimlane": "lane-customer" },
+    { "key": "basket-filled", "type": "domain-event", "text": "Basket Filled", "swimlane": "lane-customer", "boundary": "ctx-ordering" },
+    { "key": "order-placed", "type": "domain-event", "text": "Order Placed", "swimlane": "lane-customer", "boundary": "ctx-ordering", "pivotal": true },
+    { "key": "payment-provider", "type": "external-system", "text": "Payment provider", "anchor": "order-placed" },
+    { "key": "payment-authorised", "type": "domain-event", "text": "Payment Authorised", "swimlane": "lane-customer", "boundary": "ctx-ordering" },
+    { "key": "declined-late", "type": "hot-spot", "text": "What if payment is declined after the kitchen has started?", "anchor": "payment-authorised" },
+
+    { "key": "order-accepted", "type": "domain-event", "text": "Order Accepted", "swimlane": "lane-restaurant", "boundary": "ctx-kitchen" },
+    { "key": "restaurant-closed", "type": "hot-spot", "text": "What if the restaurant closes before accepting?", "anchor": "order-accepted" },
+    { "key": "meal-prepared", "type": "domain-event", "text": "Meal Prepared", "swimlane": "lane-restaurant", "boundary": "ctx-kitchen" },
+
+    { "key": "courier-assigned", "type": "domain-event", "text": "Courier Assigned", "swimlane": "lane-courier", "boundary": "ctx-delivery" },
+    { "key": "order-picked-up", "type": "domain-event", "text": "Order Picked Up", "swimlane": "lane-courier", "boundary": "ctx-delivery", "pivotal": true },
+    { "key": "live-location", "type": "opportunity", "text": "Show the courier's live location", "anchor": "order-picked-up" },
+    { "key": "order-delivered", "type": "domain-event", "text": "Order Delivered", "swimlane": "lane-courier", "boundary": "ctx-delivery" },
+    { "key": "estimates-wrong", "type": "hot-spot", "text": "Delivery estimates are often wrong", "anchor": "order-delivered" },
+
+    { "key": "order-rated", "type": "domain-event", "text": "Order Rated", "swimlane": "lane-customer" }
+  ],
+  "connections": [
+    { "from": "order-placed", "to": "payment-authorised" },
+    { "from": "payment-authorised", "to": "order-accepted" },
+    { "from": "meal-prepared", "to": "order-picked-up" },
+    { "from": "order-delivered", "to": "order-rated" }
+  ]
+}

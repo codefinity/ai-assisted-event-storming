@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <UserSecretsId>eventstorming-host</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Scalar.AspNetCore" />
+  </ItemGroup>
+
+  <!-- The composition root knows every bounded context and every adapter; nothing depends on it. -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\application\EventStorming.Identity\EventStorming.Identity.csproj" />
+    <ProjectReference Include="..\..\application\EventStorming.Teams\EventStorming.Teams.csproj" />
+    <ProjectReference Include="..\..\application\EventStorming.BoardModelling\EventStorming.BoardModelling.csproj" />
+    <ProjectReference Include="..\..\application\EventStorming.Collaboration\EventStorming.Collaboration.csproj" />
+    <ProjectReference Include="..\..\application\EventStorming.PublicIntegration\EventStorming.PublicIntegration.csproj" />
+    <ProjectReference Include="..\EventStorming.Api.Rest\EventStorming.Api.Rest.csproj" />
+    <ProjectReference Include="..\EventStorming.Realtime.SignalR\EventStorming.Realtime.SignalR.csproj" />
+    <ProjectReference Include="..\..\driven-adapters\EventStorming.Persistence.MongoDb\EventStorming.Persistence.MongoDb.csproj" />
+    <ProjectReference Include="..\..\driven-adapters\EventStorming.Security\EventStorming.Security.csproj" />
+    <ProjectReference Include="..\..\driven-adapters\EventStorming.SystemClock\EventStorming.SystemClock.csproj" />
+    <ProjectReference Include="..\..\driven-adapters\EventStorming.Email.Smtp\EventStorming.Email.Smtp.csproj" />
+    <ProjectReference Include="..\..\driven-adapters\EventStorming.ElementTypes.Json\EventStorming.ElementTypes.Json.csproj" />
+    <ProjectReference Include="..\..\driven-adapters\EventStorming.Presence.InMemory\EventStorming.Presence.InMemory.csproj" />
+    <ProjectReference Include="..\..\driven-adapters\EventStorming.Broadcasting\EventStorming.Broadcasting.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\..\..\docs\examples\food-ordering.board.json" LogicalName="food-ordering.board.json" Link="Seed\food-ordering.board.json" />
+    <EmbeddedResource Include="..\..\..\..\docs\api.md" LogicalName="guides/api.md" Link="Guides\api.md" />
+    <EmbeddedResource Include="..\..\..\..\docs\llm-guide.md" LogicalName="guides/llm-guide.md" Link="Guides\llm-guide.md" />
+  </ItemGroup>
+
+</Project>
