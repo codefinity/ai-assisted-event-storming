@@ -32,7 +32,8 @@ public sealed record ConnectionDraft(string Path, Guid? Id, string? From, string
 /// <param name="Origin">Where auto-layout starts placing drafts that have no position.</param>
 public sealed record DraftContext(Guid BoardId, ActorRef Actor, DateTimeOffset Now, Position Origin, IReadOnlyDictionary<Guid, Element> Existing);
 
-public sealed record PlannedContent(IReadOnlyList<Element> Elements, IReadOnlyList<Connection> Connections, IReadOnlyDictionary<string, Guid> KeyedIds);
+/// <param name="Grown">Swimlanes and boundaries already on the board, resized to hold the new elements that name them.</param>
+public sealed record PlannedContent(IReadOnlyList<Element> Elements, IReadOnlyList<Connection> Connections, IReadOnlyDictionary<string, Guid> KeyedIds, IReadOnlyList<Element> Grown);
 
 public sealed record DraftPlan(PlannedContent? Content, IReadOnlyList<Failure> Failures);
 
@@ -210,6 +211,17 @@ public static class DraftPlanner
             .ToList();
 
         var placements = TimelineLayout.Arrange(layoutItems, context.Origin, existing);
+        var grown = TimelineLayout.Enclose(layoutItems, placements, existing)
+            .Select(pair => context.Existing[Guid.Parse(pair.Key)] with
+            {
+                X = pair.Value.Position.X,
+                Y = pair.Value.Position.Y,
+                Width = pair.Value.Size.Width,
+                Height = pair.Value.Size.Height,
+                UpdatedAt = context.Now,
+                UpdatedBy = context.Actor,
+            })
+            .ToList();
 
         var elements = drafts
             .Select((draft, index) =>
@@ -247,7 +259,7 @@ public static class DraftPlanner
             .ToList();
 
         var keyed = keyIndex.ToDictionary(pair => pair.Key, pair => ids[pair.Value], StringComparer.Ordinal);
-        return new DraftPlan(new PlannedContent(elements, connections, keyed), []);
+        return new DraftPlan(new PlannedContent(elements, connections, keyed, grown), []);
     }
 
     /// <summary>Existing ids are passed to the layout in their canonical form, so "ABC…" and "abc…" match.</summary>

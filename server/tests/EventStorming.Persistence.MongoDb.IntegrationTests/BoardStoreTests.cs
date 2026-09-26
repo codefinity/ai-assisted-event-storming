@@ -23,6 +23,8 @@ namespace EventStorming.Persistence.MongoDb.IntegrationTests;
 
 public sealed class BoardStoreTests(MongoContainer mongo)
 {
+    private static readonly string[] Structures = ["swimlane", "boundary"];
+
     private static readonly DateTimeOffset Now = new(2026, 9, 25, 10, 0, 0, TimeSpan.Zero);
     private static readonly ActorRef Ana = new(ActorKind.Account, Guid.NewGuid(), "Ana");
 
@@ -38,18 +40,41 @@ public sealed class BoardStoreTests(MongoContainer mongo)
         var paid = Sticky(board.Id, "Payment Taken", 200, 0);
         var arrow = new Connection(Guid.NewGuid(), board.Id, placed.Id, paid.Id, null, 1, Now, Ana);
 
-        var first = await store.Insert(board.Id, [placed, paid], [arrow], Ana, Now, CancellationToken.None);
-        var again = await store.Insert(board.Id, [placed with { Text = "Changed" }, paid], [arrow], Ana, Now, CancellationToken.None);
+        var first = await store.Insert(board.Id, [placed, paid], [arrow], [], Ana, Now, CancellationToken.None);
+        var again = await store.Insert(board.Id, [placed with { Text = "Changed" }, paid], [arrow], [], Ana, Now, CancellationToken.None);
 
         first.Revision.ShouldBe(1);
         again.Revision.ShouldBe(1, "nothing new was inserted");
         again.Elements.Single(element => element.Id == placed.Id).Text.ShouldBe("Order Placed");
         again.Connections.ShouldHaveSingleItem();
 
-        var stats = await store.Stats(board.Id, CancellationToken.None);
+        var stats = await store.Stats(board.Id, Structures, CancellationToken.None);
         stats.ElementCount.ShouldBe(2);
         stats.ConnectionCount.ShouldBe(1);
         (stats.Left, stats.Right, stats.Bottom).ShouldBe((0d, 360d, 100d));
+    }
+
+    [Fact]
+    public async Task Structures_grow_in_the_same_insert_and_the_timeline_ends_at_the_last_sticky()
+    {
+        await using var provider = await mongo.NewStores();
+        var scope = provider.CreateScope().ServiceProvider;
+        var board = await NewBoard(scope);
+        var store = scope.GetRequiredService<IAddElementsStore>();
+        var lane = Sticky(board.Id, "Customer", 0, 0) with { Type = "swimlane", Width = 1600, Height = 240 };
+        var placed = Sticky(board.Id, "Order Placed", 200, 40);
+        await store.Insert(board.Id, [lane, placed], [], [], Ana, Now, CancellationToken.None);
+
+        var stats = await store.Stats(board.Id, Structures, CancellationToken.None);
+        (stats.Right, stats.ItemRight).ShouldBe((1600d, 360d));
+
+        var paid = Sticky(board.Id, "Payment Taken", 1700, 40);
+        var inserted = await store.Insert(board.Id, [paid], [], [lane with { Width = 1900 }], Ana, Now, CancellationToken.None);
+
+        inserted.Revision.ShouldBe(2);
+        var grown = inserted.Elements.Single(element => element.Id == lane.Id);
+        (grown.Width, grown.Version).ShouldBe((1900d, 2L));
+        inserted.Elements.Count.ShouldBe(2);
     }
 
     [Fact]
@@ -61,13 +86,13 @@ public sealed class BoardStoreTests(MongoContainer mongo)
         var store = scope.GetRequiredService<IAddElementsStore>();
         var placed = Sticky(board.Id, "Order Placed", 0, 0);
         var paid = Sticky(board.Id, "Payment Taken", 200, 0);
-        await store.Insert(board.Id, [placed, paid], [new Connection(Guid.NewGuid(), board.Id, placed.Id, paid.Id, null, 1, Now, Ana)], Ana, Now, CancellationToken.None);
+        await store.Insert(board.Id, [placed, paid], [new Connection(Guid.NewGuid(), board.Id, placed.Id, paid.Id, null, 1, Now, Ana)], [], Ana, Now, CancellationToken.None);
 
         var inserted = await store.Insert(board.Id, [Sticky(board.Id, "Meal Cooked", 400, 0)],
-            [new Connection(Guid.NewGuid(), board.Id, placed.Id, paid.Id, "again", 1, Now, Ana)], Ana, Now, CancellationToken.None);
+            [new Connection(Guid.NewGuid(), board.Id, placed.Id, paid.Id, "again", 1, Now, Ana)], [], Ana, Now, CancellationToken.None);
 
         inserted.Elements.ShouldHaveSingleItem();
-        (await scope.GetRequiredService<IAddElementsStore>().Stats(board.Id, CancellationToken.None)).ConnectionCount.ShouldBe(1);
+        (await scope.GetRequiredService<IAddElementsStore>().Stats(board.Id, Structures, CancellationToken.None)).ConnectionCount.ShouldBe(1);
     }
 
     [Fact]
@@ -77,7 +102,7 @@ public sealed class BoardStoreTests(MongoContainer mongo)
         var scope = provider.CreateScope().ServiceProvider;
         var board = await NewBoard(scope);
         var placed = Sticky(board.Id, "Order Placed", 10, 20);
-        await scope.GetRequiredService<IAddElementsStore>().Insert(board.Id, [placed], [], Ana, Now, CancellationToken.None);
+        await scope.GetRequiredService<IAddElementsStore>().Insert(board.Id, [placed], [], [], Ana, Now, CancellationToken.None);
 
         var moves = scope.GetRequiredService<IMoveElementsStore>();
         var updates = scope.GetRequiredService<IUpdateElementStore>();
@@ -105,7 +130,7 @@ public sealed class BoardStoreTests(MongoContainer mongo)
         var placed = Sticky(board.Id, "Order Placed", 0, 0);
         var paid = Sticky(board.Id, "Payment Taken", 200, 0);
         await scope.GetRequiredService<IAddElementsStore>().Insert(board.Id, [placed, paid],
-            [new Connection(Guid.NewGuid(), board.Id, placed.Id, paid.Id, null, 1, Now, Ana)], Ana, Now, CancellationToken.None);
+            [new Connection(Guid.NewGuid(), board.Id, placed.Id, paid.Id, null, 1, Now, Ana)], [], Ana, Now, CancellationToken.None);
 
         var deleted = await scope.GetRequiredService<IDeleteElementsStore>().Delete(board.Id, [placed.Id, Guid.NewGuid()], Ana, Now, CancellationToken.None);
 
@@ -122,7 +147,7 @@ public sealed class BoardStoreTests(MongoContainer mongo)
         await using var provider = await mongo.NewStores();
         var scope = provider.CreateScope().ServiceProvider;
         var board = await NewBoard(scope);
-        await scope.GetRequiredService<IAddElementsStore>().Insert(board.Id, [Sticky(board.Id, "Old", 0, 0)], [], Ana, Now, CancellationToken.None);
+        await scope.GetRequiredService<IAddElementsStore>().Insert(board.Id, [Sticky(board.Id, "Old", 0, 0)], [], [], Ana, Now, CancellationToken.None);
 
         var replaced = await scope.GetRequiredService<IImportBoardDocumentStore>()
             .ReplaceContents(board.Id, "Renamed", [Sticky(board.Id, "New A", 0, 0), Sticky(board.Id, "New B", 200, 0)], [], Ana, Now, CancellationToken.None);
@@ -143,7 +168,7 @@ public sealed class BoardStoreTests(MongoContainer mongo)
         var placed = Sticky(board.Id, "Order Placed", 0, 0);
         var paid = Sticky(board.Id, "Payment Taken", 200, 0);
         await scope.GetRequiredService<IAddElementsStore>().Insert(board.Id, [placed, paid],
-            [new Connection(Guid.NewGuid(), board.Id, placed.Id, paid.Id, null, 1, Now, Ana)], Ana, Now, CancellationToken.None);
+            [new Connection(Guid.NewGuid(), board.Id, placed.Id, paid.Id, null, 1, Now, Ana)], [], Ana, Now, CancellationToken.None);
 
         var copy = await scope.GetRequiredService<IDuplicateBoardStore>().Duplicate(board.Id, board with { Id = Guid.NewGuid(), Name = "Copy" }, CancellationToken.None);
 
@@ -191,7 +216,7 @@ public sealed class BoardStoreTests(MongoContainer mongo)
         var scope = provider.CreateScope().ServiceProvider;
         var board = await NewBoard(scope);
         await scope.GetRequiredService<IAddElementsStore>().Insert(board.Id,
-            [Sticky(board.Id, "A", 0, 0), Sticky(board.Id, "B", 0, 0), Sticky(board.Id, "C", 0, 0) with { Type = "hot-spot" }], [], Ana, Now, CancellationToken.None);
+            [Sticky(board.Id, "A", 0, 0), Sticky(board.Id, "B", 0, 0), Sticky(board.Id, "C", 0, 0) with { Type = "hot-spot" }], [], [], Ana, Now, CancellationToken.None);
 
         var list = scope.GetRequiredService<IListElementsStore>();
         var page = (await list.Page(board.Id, "domain-event", null, 1, CancellationToken.None)).ShouldNotBeNull();

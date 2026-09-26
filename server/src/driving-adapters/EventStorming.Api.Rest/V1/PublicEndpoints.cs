@@ -164,7 +164,7 @@ internal static class PublicEndpoints
                     return Problems.From(FailurePaths.Unbatch(result.Failures, "elements[0]."), http);
                 }
 
-                var element = result.Added!.Changes.Elements[0];
+                var element = result.Added!.Created[0];
                 return TypedResults.Created($"/api/v1/boards/{boardId}/elements/{element.Id}", PublicElement.From(element));
             })
             .RequireAuthorization(ApiKeyAuthenticationHandler.WritePolicy)
@@ -187,10 +187,14 @@ internal static class PublicEndpoints
                     return Problems.From(result, http);
                 }
 
-                var changes = result.Added!.Changes;
+                var added = result.Added!;
                 return TypedResults.Created(
                     $"/api/v1/boards/{boardId}/elements",
-                    new BulkElementsResponse(changes.Elements.Select(PublicElement.From).ToList(), changes.Connections.Select(PublicConnection.Of).ToList(), result.Added.KeyedIds));
+                    new BulkElementsResponse(
+                        added.Created.Select(PublicElement.From).ToList(),
+                        added.Changes.Connections.Select(PublicConnection.Of).ToList(),
+                        added.KeyedIds,
+                        added.Grown.Select(PublicElement.From).ToList()));
             })
             .RequireAuthorization(ApiKeyAuthenticationHandler.WritePolicy)
             .WithName("AddElementsInBulk").WithSummary("Add up to 500 elements and their connections in one request; positions optional");

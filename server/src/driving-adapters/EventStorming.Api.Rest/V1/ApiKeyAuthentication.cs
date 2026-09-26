@@ -22,7 +22,7 @@ internal sealed class ApiKeyAuthenticationHandler(
     ILoggerFactory logger,
     UrlEncoder encoder) : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
 {
-    public const string Scheme = "api-key";
+    public const string SchemeName = "api-key";
     public const string ReadPolicy = "api-read";
     public const string WritePolicy = "api-write";
 
@@ -53,7 +53,7 @@ internal sealed class ApiKeyAuthenticationHandler(
         };
         claims.AddRange(key.Scopes.Select(scope => new Claim(Actors.ScopeClaim, scope)));
 
-        return AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(new ClaimsIdentity(claims, Scheme, "name", null)), Scheme));
+        return AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(new ClaimsIdentity(claims, SchemeName, "name", null)), SchemeName));
     }
 
     protected override async Task HandleChallengeAsync(AuthenticationProperties properties)

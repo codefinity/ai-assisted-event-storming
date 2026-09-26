@@ -17,7 +17,7 @@ namespace EventStorming.Persistence.MongoDb.BoardModelling;
 
 internal sealed class AddElementsStore(MongoDatabase mongo) : IAddElementsStore
 {
-    public async Task<BoardContentStats> Stats(Guid boardId, CancellationToken cancellationToken)
+    public async Task<BoardContentStats> Stats(Guid boardId, IReadOnlyCollection<string> structureTypes, CancellationToken cancellationToken)
     {
         var elementCount = await BoardCollections.BoardsIn(mongo).Find(board => board.Id == boardId).Project(board => board.ElementCount).FirstOrDefaultAsync(cancellationToken);
         var connectionCount = (int)await BoardCollections.ConnectionsIn(mongo).CountDocumentsAsync(connection => connection.BoardId == boardId, cancellationToken: cancellationToken);
@@ -32,20 +32,53 @@ internal sealed class AddElementsStore(MongoDatabase mongo) : IAddElementsStore
                 { "top", new BsonDocument("$min", "$y") },
                 { "right", new BsonDocument("$max", new BsonDocument("$add", new BsonArray { "$x", "$width" })) },
                 { "bottom", new BsonDocument("$max", new BsonDocument("$add", new BsonArray { "$y", "$height" })) },
+                // Structures (swimlanes, boundaries) span the timeline; the timeline itself ends at the last sticky.
+                {
+                    "itemRight", new BsonDocument("$max", new BsonDocument("$cond", new BsonArray
+                    {
+                        new BsonDocument("$in", new BsonArray { "$type", new BsonArray(structureTypes) }),
+                        BsonNull.Value,
+                        new BsonDocument("$add", new BsonArray { "$x", "$width" }),
+                    }))
+                },
             })
             .FirstOrDefaultAsync(cancellationToken);
 
         return bounds is null
             ? new BoardContentStats(elementCount, connectionCount, null, null, null, null)
-            : new BoardContentStats(elementCount, connectionCount, bounds["left"].ToDouble(), bounds["top"].ToDouble(), bounds["right"].ToDouble(), bounds["bottom"].ToDouble());
+            : new BoardContentStats(
+                elementCount,
+                connectionCount,
+                bounds["left"].ToDouble(),
+                bounds["top"].ToDouble(),
+                bounds["right"].ToDouble(),
+                bounds["bottom"].ToDouble(),
+                bounds["itemRight"].IsBsonNull ? null : bounds["itemRight"].ToDouble());
     }
 
     public Task<IReadOnlyList<Element>> FindElements(Guid boardId, IReadOnlyCollection<Guid> elementIds, CancellationToken cancellationToken) =>
         BoardCollections.ElementsById(mongo, boardId, elementIds, cancellationToken);
 
-    public Task<InsertedContent> Insert(Guid boardId, IReadOnlyList<Element> elements, IReadOnlyList<Connection> connections, ActorRef by, DateTimeOffset at, CancellationToken cancellationToken) =>
+    public Task<InsertedContent> Insert(Guid boardId, IReadOnlyList<Element> elements, IReadOnlyList<Connection> connections, IReadOnlyList<Element> grown, ActorRef by, DateTimeOffset at, CancellationToken cancellationToken) =>
         mongo.InTransaction(async (session, token) =>
         {
+            if (grown.Count > 0)
+            {
+                await BoardCollections.ElementsIn(mongo).BulkWriteAsync(
+                    session,
+                    grown.Select(element => new UpdateOneModel<MongoElement>(
+                        Builders<MongoElement>.Filter.Where(candidate => candidate.Id == element.Id && candidate.BoardId == boardId),
+                        Builders<MongoElement>.Update
+                            .Set(candidate => candidate.X, element.X)
+                            .Set(candidate => candidate.Y, element.Y)
+                            .Set(candidate => candidate.Width, element.Width)
+                            .Set(candidate => candidate.Height, element.Height)
+                            .Set(candidate => candidate.UpdatedAt, at)
+                            .Set(candidate => candidate.UpdatedBy, MongoActorRef.From(by))
+                            .Inc(candidate => candidate.Version, 1))),
+                    cancellationToken: token);
+            }
+
             var inserted = 0;
             if (elements.Count > 0)
             {
@@ -73,11 +106,11 @@ internal sealed class AddElementsStore(MongoDatabase mongo) : IAddElementsStore
                     cancellationToken: token);
             }
 
-            var revision = inserted > 0 || connectionsToInsert.Count > 0
+            var revision = inserted > 0 || connectionsToInsert.Count > 0 || grown.Count > 0
                 ? await BoardCollections.BumpRevision(mongo, boardId, by, at, inserted, token, session)
                 : await BoardCollections.CurrentRevision(mongo, boardId, token);
 
-            var elementIds = elements.Select(element => element.Id).ToList();
+            var elementIds = elements.Concat(grown).Select(element => element.Id).ToList();
             var connectionIds = connections.Select(connection => connection.Id).ToList();
             var storedElements = await BoardCollections.ElementsById(mongo, boardId, elementIds, token, session);
             var storedConnections = await BoardCollections.ConnectionsIn(mongo)

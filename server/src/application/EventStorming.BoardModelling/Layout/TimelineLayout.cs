@@ -196,6 +196,57 @@ public static class TimelineLayout
         return placements;
     }
 
+    /// <summary>
+    /// The swimlanes and boundaries already on the board that placed items name, grown to hold them: a
+    /// lane widens (or deepens) to contain its members with padding, a boundary extends to surround its
+    /// members. Only structures that have to change are returned, keyed as in <paramref name="existing"/>.
+    /// </summary>
+    public static IReadOnlyDictionary<string, LayoutPlacement> Enclose(
+        IReadOnlyList<LayoutItem> items,
+        IReadOnlyDictionary<string, LayoutPlacement> placements,
+        IReadOnlyDictionary<string, PlacedElement> existing)
+    {
+        var memberships = items
+            .Where(item => item.Role == LayoutRole.Item && placements.ContainsKey(item.Key))
+            .SelectMany(item => new[] { (Structure: item.Swimlane, Item: item), (Structure: item.Boundary, Item: item) })
+            .Where(membership => membership.Structure is not null && existing.ContainsKey(membership.Structure))
+            .GroupBy(membership => membership.Structure!, StringComparer.OrdinalIgnoreCase);
+
+        var grown = new Dictionary<string, LayoutPlacement>(StringComparer.OrdinalIgnoreCase);
+        foreach (var group in memberships)
+        {
+            var structure = existing[group.Key];
+            var members = group.Select(membership => placements[membership.Item.Key]).ToList();
+            var (left, top, right, bottom) = (structure.X, structure.Y, structure.X + structure.Width, structure.Y + structure.Height);
+            var membersRight = members.Max(member => member.Position.X + member.Size.Width);
+            var membersBottom = members.Max(member => member.Position.Y + member.Size.Height);
+
+            if (structure.Role == LayoutRole.Lane)
+            {
+                right = Math.Max(right, membersRight + LanePadding);
+                bottom = Math.Max(bottom, membersBottom + LanePadding);
+            }
+            else if (structure.Role == LayoutRole.Boundary)
+            {
+                left = Math.Min(left, members.Min(member => member.Position.X) - BoundaryPadding);
+                top = Math.Min(top, members.Min(member => member.Position.Y) - BoundaryPadding - BoundaryLabelSpace);
+                right = Math.Max(right, membersRight + BoundaryPadding);
+                bottom = Math.Max(bottom, membersBottom + BoundaryPadding);
+            }
+            else
+            {
+                continue;
+            }
+
+            if (left != structure.X || top != structure.Y || right != structure.X + structure.Width || bottom != structure.Y + structure.Height)
+            {
+                grown[group.Key] = new LayoutPlacement(new Position(Round(left), Round(top)), new Size(Round(right - left), Round(bottom - top)));
+            }
+        }
+
+        return grown;
+    }
+
     private static string BandFor(LayoutItem item, IReadOnlyDictionary<string, LayoutItem> byKey) =>
         item.Swimlane is null
             ? DefaultBand

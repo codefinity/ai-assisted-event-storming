@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" />
+  </ItemGroup>
+
+  <!-- An MCP server over Board Modelling's use cases: the same ones the web app and the REST API call. -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\application\EventStorming.BoardModelling\EventStorming.BoardModelling.csproj" />
+  </ItemGroup>
+
+  <!-- The modelling guide, offered to agents as a resource. -->
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\..\..\docs\llm-guide.md" LogicalName="llm-guide.md" Link="Guides\llm-guide.md" />
+  </ItemGroup>
+
+</Project>

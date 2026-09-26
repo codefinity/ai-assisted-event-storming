@@ -125,7 +125,7 @@ namespace EventStorming.Specs.Features.BoardModelling
         
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
-            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/BoardModelling/Elements.feature.ndjson", 33);
+            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/BoardModelling/Elements.feature.ndjson", 36);
         }
         
         async System.Threading.Tasks.ValueTask Xunit.IAsyncLifetime.InitializeAsync()
@@ -251,15 +251,15 @@ namespace EventStorming.Specs.Features.BoardModelling
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="An element can be stacked below one that is already there")]
+        [global::Xunit.FactAttribute(DisplayName="New elements continue after the last sticky, inside the swimlane they name")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "An element can be stacked below one that is already there")]
-        public async global::System.Threading.Tasks.Task AnElementCanBeStackedBelowOneThatIsAlreadyThere()
+        [global::Xunit.TraitAttribute("Description", "New elements continue after the last sticky, inside the swimlane they name")]
+        public async global::System.Threading.Tasks.Task NewElementsContinueAfterTheLastStickyInsideTheSwimlaneTheyName()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             string pickleIndex = "2";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("An element can be stacked below one that is already there", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("New elements continue after the last sticky, inside the swimlane they name", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
 #line 29
@@ -282,10 +282,16 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "x",
                             "y"});
                 table2.AddRow(new string[] {
+                            "customer",
+                            "swimlane",
+                            "Customer",
+                            "0",
+                            "0"});
+                table2.AddRow(new string[] {
                             "placed",
                             "domain-event",
                             "Order Placed",
-                            "100",
+                            "200",
                             "40"});
 #line 30
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table2, "Given ");
@@ -294,34 +300,40 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "key",
                             "type",
                             "text",
-                            "anchor"});
+                            "swimlane"});
                 table3.AddRow(new string[] {
-                            "q",
-                            "hot-spot",
-                            "What if it is late?",
-                            "placed"});
-#line 33
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "customer"});
+#line 34
       await testRunner.WhenAsync("Ana adds these elements to \"Ordering\":", ((string)(null)), table3, "When ");
 #line hidden
-#line 36
-      await testRunner.ThenAsync("the element \"q\" is placed below \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 37
+      await testRunner.ThenAsync("the element \"paid\" is placed to the right of \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 38
+      await testRunner.AndAsync("\"customer\" contains \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 39
+      await testRunner.AndAsync("the element \"customer\" is at version 1", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Elements and the arrows between them arrive together, joined by key")]
+        [global::Xunit.FactAttribute(DisplayName="A swimlane grows to hold new elements that no longer fit in it")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Elements and the arrows between them arrive together, joined by key")]
-        public async global::System.Threading.Tasks.Task ElementsAndTheArrowsBetweenThemArriveTogetherJoinedByKey()
+        [global::Xunit.TraitAttribute("Description", "A swimlane grows to hold new elements that no longer fit in it")]
+        public async global::System.Threading.Tasks.Task ASwimlaneGrowsToHoldNewElementsThatNoLongerFitInIt()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             string pickleIndex = "3";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Elements and the arrows between them arrive together, joined by key", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A swimlane grows to hold new elements that no longer fit in it", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
-#line 38
+#line 41
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -335,198 +347,70 @@ namespace EventStorming.Specs.Features.BoardModelling
   await this.FeatureBackgroundAsync();
 #line hidden
                 global::Reqnroll.Table table4 = new global::Reqnroll.Table(new string[] {
-                            "kind",
                             "key",
                             "type",
                             "text",
-                            "from",
-                            "to"});
+                            "x",
+                            "y",
+                            "width",
+                            "height"});
                 table4.AddRow(new string[] {
-                            "element",
+                            "customer",
+                            "swimlane",
+                            "Customer",
+                            "0",
+                            "0",
+                            "400",
+                            "240"});
+                table4.AddRow(new string[] {
                             "placed",
                             "domain-event",
                             "Order Placed",
+                            "200",
+                            "40",
                             "",
                             ""});
-                table4.AddRow(new string[] {
-                            "element",
-                            "paid",
-                            "domain-event",
-                            "Payment Taken",
-                            "",
-                            ""});
-                table4.AddRow(new string[] {
-                            "connection",
-                            "",
-                            "",
-                            "",
-                            "placed",
-                            "paid"});
-#line 39
-      await testRunner.WhenAsync("Ana adds these elements with connections to \"Ordering\":", ((string)(null)), table4, "When ");
-#line hidden
-#line 44
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 45
-      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::Xunit.FactAttribute(DisplayName="Elements given ids by the client can be joined by those ids")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Elements given ids by the client can be joined by those ids")]
-        public async global::System.Threading.Tasks.Task ElementsGivenIdsByTheClientCanBeJoinedByThoseIds()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "4";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Elements given ids by the client can be joined by those ids", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
-#line 47
-    this.ScenarioInitialize(scenarioInfo, ruleInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
-  await this.FeatureBackgroundAsync();
-#line hidden
-#line 48
-      await testRunner.WhenAsync("Ana adds two elements with client ids and an arrow between those ids to \"Ordering" +
-                        "\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 49
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 50
-      await testRunner.AndAsync("the arrow joins the two client ids", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::Xunit.FactAttribute(DisplayName="Adding an element with a client id twice stores it once")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Adding an element with a client id twice stores it once")]
-        public async global::System.Threading.Tasks.Task AddingAnElementWithAClientIdTwiceStoresItOnce()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "5";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Adding an element with a client id twice stores it once", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
-#line 52
-    this.ScenarioInitialize(scenarioInfo, ruleInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
-  await this.FeatureBackgroundAsync();
-#line hidden
-#line 53
-      await testRunner.WhenAsync("Ana adds the same element with id \"5f2d6c9e-1111-4222-8333-944455556666\" twice to" +
-                        " \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 54
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 55
-      await testRunner.AndAsync("the board \"Ordering\" has 1 element", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::Xunit.FactAttribute(DisplayName="Unknown types and misplaced pivots are all reported, with the fix")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Unknown types and misplaced pivots are all reported, with the fix")]
-        public async global::System.Threading.Tasks.Task UnknownTypesAndMisplacedPivotsAreAllReportedWithTheFix()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "6";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Unknown types and misplaced pivots are all reported, with the fix", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
-#line 57
-    this.ScenarioInitialize(scenarioInfo, ruleInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
-  await this.FeatureBackgroundAsync();
+#line 42
+      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table4, "Given ");
 #line hidden
                 global::Reqnroll.Table table5 = new global::Reqnroll.Table(new string[] {
                             "key",
                             "type",
                             "text",
-                            "pivotal"});
+                            "swimlane"});
                 table5.AddRow(new string[] {
-                            "a",
-                            "event",
-                            "Order Placed",
-                            ""});
-                table5.AddRow(new string[] {
-                            "b",
-                            "command",
-                            "Place Order",
-                            "yes"});
-#line 58
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "customer"});
+#line 46
       await testRunner.WhenAsync("Ana adds these elements to \"Ordering\":", ((string)(null)), table5, "When ");
 #line hidden
-                global::Reqnroll.Table table6 = new global::Reqnroll.Table(new string[] {
-                            "field",
-                            "code"});
-                table6.AddRow(new string[] {
-                            "elements[0].type",
-                            "unknown-element-type"});
-                table6.AddRow(new string[] {
-                            "elements[1].pivotal",
-                            "not-pivotal-type"});
-#line 62
-      await testRunner.ThenAsync("the request fails with these failures:", ((string)(null)), table6, "Then ");
+#line 49
+      await testRunner.ThenAsync("\"customer\" contains \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 66
-      await testRunner.AndAsync("every failure says how to fix it", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 50
+      await testRunner.AndAsync("the element \"customer\" is at version 2", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 67
-      await testRunner.AndAsync("nothing is announced", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 51
+      await testRunner.AndAsync("the announcement carries the element \"customer\" at version 2", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="A typo in a reference suggests the key that was meant")]
+        [global::Xunit.FactAttribute(DisplayName="A boundary grows to surround a new element that belongs to it")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "A typo in a reference suggests the key that was meant")]
-        public async global::System.Threading.Tasks.Task ATypoInAReferenceSuggestsTheKeyThatWasMeant()
+        [global::Xunit.TraitAttribute("Description", "A boundary grows to surround a new element that belongs to it")]
+        public async global::System.Threading.Tasks.Task ABoundaryGrowsToSurroundANewElementThatBelongsToIt()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "7";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A typo in a reference suggests the key that was meant", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "4";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A boundary grows to surround a new element that belongs to it", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
-#line 69
+#line 53
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -538,115 +422,69 @@ namespace EventStorming.Specs.Features.BoardModelling
                 await this.ScenarioStartAsync();
 #line 5
   await this.FeatureBackgroundAsync();
+#line hidden
+                global::Reqnroll.Table table6 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y",
+                            "width",
+                            "height"});
+                table6.AddRow(new string[] {
+                            "ordering",
+                            "boundary",
+                            "Ordering",
+                            "160",
+                            "0",
+                            "240",
+                            "180"});
+                table6.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "200",
+                            "40",
+                            "",
+                            ""});
+#line 54
+      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table6, "Given ");
 #line hidden
                 global::Reqnroll.Table table7 = new global::Reqnroll.Table(new string[] {
                             "key",
                             "type",
                             "text",
-                            "anchor"});
+                            "boundary"});
                 table7.AddRow(new string[] {
-                            "placed",
+                            "paid",
                             "domain-event",
-                            "Order Placed",
-                            ""});
-                table7.AddRow(new string[] {
-                            "q",
-                            "hot-spot",
-                            "What if it fails?",
-                            "plced"});
-#line 70
+                            "Payment Taken",
+                            "ordering"});
+#line 58
       await testRunner.WhenAsync("Ana adds these elements to \"Ordering\":", ((string)(null)), table7, "When ");
 #line hidden
-#line 74
-      await testRunner.ThenAsync("the request fails with \"unknown-reference\" on \"elements[1].anchor\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 61
+      await testRunner.ThenAsync("\"ordering\" contains \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 62
+      await testRunner.AndAsync("\"ordering\" contains \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Viewers cannot add")]
+        [global::Xunit.FactAttribute(DisplayName="An element can be stacked below one that is already there")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Viewers cannot add")]
-        public async global::System.Threading.Tasks.Task ViewersCannotAdd()
+        [global::Xunit.TraitAttribute("Description", "An element can be stacked below one that is already there")]
+        public async global::System.Threading.Tasks.Task AnElementCanBeStackedBelowOneThatIsAlreadyThere()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "8";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Viewers cannot add", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "5";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("An element can be stacked below one that is already there", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
-#line 76
-    this.ScenarioInitialize(scenarioInfo, ruleInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
-  await this.FeatureBackgroundAsync();
-#line hidden
-#line 77
-      await testRunner.WhenAsync("Bo adds a \"domain-event\" saying \"Order Placed\" to \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 78
-      await testRunner.ThenAsync("the request is refused as \"forbidden\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::Xunit.FactAttribute(DisplayName="Up to 500 elements can be added in one request")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Up to 500 elements can be added in one request")]
-        public async global::System.Threading.Tasks.Task UpTo500ElementsCanBeAddedInOneRequest()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "9";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Up to 500 elements can be added in one request", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
-#line 80
-    this.ScenarioInitialize(scenarioInfo, ruleInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
-  await this.FeatureBackgroundAsync();
-#line hidden
-#line 81
-      await testRunner.WhenAsync("Ana adds 500 elements to \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 82
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 83
-      await testRunner.AndAsync("the board \"Ordering\" has 500 elements", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::Xunit.FactAttribute(DisplayName="Changing the text bumps the version and announces the full element")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Changing the text bumps the version and announces the full element")]
-        public async global::System.Threading.Tasks.Task ChangingTheTextBumpsTheVersionAndAnnouncesTheFullElement()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "10";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Changing the text bumps the version and announces the full element", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
-#line 93
+#line 64
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -671,101 +509,41 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "Order Placed",
                             "100",
                             "40"});
-                table8.AddRow(new string[] {
-                            "pay",
-                            "command",
-                            "Pay for order",
-                            "300",
-                            "40"});
-#line 88
+#line 65
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table8, "Given ");
-#line hidden
-#line 94
-      await testRunner.WhenAsync("Ana changes the text of \"placed\" to \"Order Submitted\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 95
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 96
-      await testRunner.AndAsync("the element \"placed\" says \"Order Submitted\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 97
-      await testRunner.AndAsync("the element \"placed\" is at version 2", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 98
-      await testRunner.AndAsync("the announcement carries the element \"placed\" at version 2", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::Xunit.FactAttribute(DisplayName="A Domain Event can be marked pivotal")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "A Domain Event can be marked pivotal")]
-        public async global::System.Threading.Tasks.Task ADomainEventCanBeMarkedPivotal()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "11";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A Domain Event can be marked pivotal", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
-#line 100
-    this.ScenarioInitialize(scenarioInfo, ruleInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
-  await this.FeatureBackgroundAsync();
 #line hidden
                 global::Reqnroll.Table table9 = new global::Reqnroll.Table(new string[] {
                             "key",
                             "type",
                             "text",
-                            "x",
-                            "y"});
+                            "anchor"});
                 table9.AddRow(new string[] {
-                            "placed",
-                            "domain-event",
-                            "Order Placed",
-                            "100",
-                            "40"});
-                table9.AddRow(new string[] {
-                            "pay",
-                            "command",
-                            "Pay for order",
-                            "300",
-                            "40"});
-#line 88
-      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table9, "Given ");
+                            "q",
+                            "hot-spot",
+                            "What if it is late?",
+                            "placed"});
+#line 68
+      await testRunner.WhenAsync("Ana adds these elements to \"Ordering\":", ((string)(null)), table9, "When ");
 #line hidden
-#line 101
-      await testRunner.WhenAsync("Ana marks \"placed\" as pivotal", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 102
-      await testRunner.ThenAsync("the element \"placed\" is pivotal", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 71
+      await testRunner.ThenAsync("the element \"q\" is placed below \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="A Command cannot be pivotal")]
+        [global::Xunit.FactAttribute(DisplayName="Elements and the arrows between them arrive together, joined by key")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "A Command cannot be pivotal")]
-        public async global::System.Threading.Tasks.Task ACommandCannotBePivotal()
+        [global::Xunit.TraitAttribute("Description", "Elements and the arrows between them arrive together, joined by key")]
+        public async global::System.Threading.Tasks.Task ElementsAndTheArrowsBetweenThemArriveTogetherJoinedByKey()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "12";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A Command cannot be pivotal", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "6";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Elements and the arrows between them arrive together, joined by key", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
-#line 104
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
+#line 73
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -779,48 +557,134 @@ namespace EventStorming.Specs.Features.BoardModelling
   await this.FeatureBackgroundAsync();
 #line hidden
                 global::Reqnroll.Table table10 = new global::Reqnroll.Table(new string[] {
+                            "kind",
                             "key",
                             "type",
                             "text",
-                            "x",
-                            "y"});
+                            "from",
+                            "to"});
                 table10.AddRow(new string[] {
+                            "element",
                             "placed",
                             "domain-event",
                             "Order Placed",
-                            "100",
-                            "40"});
+                            "",
+                            ""});
                 table10.AddRow(new string[] {
-                            "pay",
-                            "command",
-                            "Pay for order",
-                            "300",
-                            "40"});
-#line 88
-      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table10, "Given ");
+                            "element",
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "",
+                            ""});
+                table10.AddRow(new string[] {
+                            "connection",
+                            "",
+                            "",
+                            "",
+                            "placed",
+                            "paid"});
+#line 74
+      await testRunner.WhenAsync("Ana adds these elements with connections to \"Ordering\":", ((string)(null)), table10, "When ");
 #line hidden
-#line 105
-      await testRunner.WhenAsync("Ana marks \"pay\" as pivotal", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line 79
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 106
-      await testRunner.ThenAsync("the request fails with \"not-pivotal-type\" on \"pivotal\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 80
+      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Changing a pivotal event into a command quietly drops the emphasis")]
+        [global::Xunit.FactAttribute(DisplayName="Elements given ids by the client can be joined by those ids")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Changing a pivotal event into a command quietly drops the emphasis")]
-        public async global::System.Threading.Tasks.Task ChangingAPivotalEventIntoACommandQuietlyDropsTheEmphasis()
+        [global::Xunit.TraitAttribute("Description", "Elements given ids by the client can be joined by those ids")]
+        public async global::System.Threading.Tasks.Task ElementsGivenIdsByTheClientCanBeJoinedByThoseIds()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "13";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Changing a pivotal event into a command quietly drops the emphasis", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "7";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Elements given ids by the client can be joined by those ids", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
-#line 108
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
+#line 82
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 83
+      await testRunner.WhenAsync("Ana adds two elements with client ids and an arrow between those ids to \"Ordering" +
+                        "\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 84
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 85
+      await testRunner.AndAsync("the arrow joins the two client ids", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Adding an element with a client id twice stores it once")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "Adding an element with a client id twice stores it once")]
+        public async global::System.Threading.Tasks.Task AddingAnElementWithAClientIdTwiceStoresItOnce()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "8";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Adding an element with a client id twice stores it once", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
+#line 87
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 88
+      await testRunner.WhenAsync("Ana adds the same element with id \"5f2d6c9e-1111-4222-8333-944455556666\" twice to" +
+                        " \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 89
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 90
+      await testRunner.AndAsync("the board \"Ordering\" has 1 element", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Unknown types and misplaced pivots are all reported, with the fix")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "Unknown types and misplaced pivots are all reported, with the fix")]
+        public async global::System.Threading.Tasks.Task UnknownTypesAndMisplacedPivotsAreAllReportedWithTheFix()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "9";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Unknown types and misplaced pivots are all reported, with the fix", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
+#line 92
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -837,118 +701,54 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "key",
                             "type",
                             "text",
-                            "x",
-                            "y"});
+                            "pivotal"});
                 table11.AddRow(new string[] {
-                            "placed",
-                            "domain-event",
+                            "a",
+                            "event",
                             "Order Placed",
-                            "100",
-                            "40"});
+                            ""});
                 table11.AddRow(new string[] {
-                            "pay",
+                            "b",
                             "command",
-                            "Pay for order",
-                            "300",
-                            "40"});
-#line 88
-      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table11, "Given ");
-#line hidden
-#line 109
-      await testRunner.GivenAsync("Ana marks \"placed\" as pivotal", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
-#line hidden
-#line 110
-      await testRunner.WhenAsync("Ana changes the type of \"placed\" to \"command\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 111
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 112
-      await testRunner.AndAsync("the element \"placed\" is a \"command\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 113
-      await testRunner.AndAsync("the element \"placed\" is not pivotal", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::Xunit.FactAttribute(DisplayName="A stale expected version is refused and names the current one")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "A stale expected version is refused and names the current one")]
-        public async global::System.Threading.Tasks.Task AStaleExpectedVersionIsRefusedAndNamesTheCurrentOne()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "14";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A stale expected version is refused and names the current one", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
-#line 115
-    this.ScenarioInitialize(scenarioInfo, ruleInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
-  await this.FeatureBackgroundAsync();
+                            "Place Order",
+                            "yes"});
+#line 93
+      await testRunner.WhenAsync("Ana adds these elements to \"Ordering\":", ((string)(null)), table11, "When ");
 #line hidden
                 global::Reqnroll.Table table12 = new global::Reqnroll.Table(new string[] {
-                            "key",
-                            "type",
-                            "text",
-                            "x",
-                            "y"});
+                            "field",
+                            "code"});
                 table12.AddRow(new string[] {
-                            "placed",
-                            "domain-event",
-                            "Order Placed",
-                            "100",
-                            "40"});
+                            "elements[0].type",
+                            "unknown-element-type"});
                 table12.AddRow(new string[] {
-                            "pay",
-                            "command",
-                            "Pay for order",
-                            "300",
-                            "40"});
-#line 88
-      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table12, "Given ");
+                            "elements[1].pivotal",
+                            "not-pivotal-type"});
+#line 97
+      await testRunner.ThenAsync("the request fails with these failures:", ((string)(null)), table12, "Then ");
 #line hidden
-#line 116
-      await testRunner.GivenAsync("Ana changes the text of \"placed\" to \"Order Submitted\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line 101
+      await testRunner.AndAsync("every failure says how to fix it", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 117
-      await testRunner.WhenAsync("Ana changes the text of \"placed\" to \"Order Sent\" expecting version 1", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 118
-      await testRunner.ThenAsync("the request fails with \"version-conflict\" on \"expectedVersion\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 119
-      await testRunner.AndAsync("the request is refused as \"conflict\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 120
-      await testRunner.AndAsync("the element \"placed\" says \"Order Submitted\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 102
+      await testRunner.AndAsync("nothing is announced", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Resizing keeps the position")]
+        [global::Xunit.FactAttribute(DisplayName="A typo in a reference suggests the key that was meant")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Resizing keeps the position")]
-        public async global::System.Threading.Tasks.Task ResizingKeepsThePosition()
+        [global::Xunit.TraitAttribute("Description", "A typo in a reference suggests the key that was meant")]
+        public async global::System.Threading.Tasks.Task ATypoInAReferenceSuggestsTheKeyThatWasMeant()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "15";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Resizing keeps the position", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "10";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A typo in a reference suggests the key that was meant", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
-#line 122
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
+#line 104
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -965,48 +765,110 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "key",
                             "type",
                             "text",
-                            "x",
-                            "y"});
+                            "anchor"});
                 table13.AddRow(new string[] {
                             "placed",
                             "domain-event",
                             "Order Placed",
-                            "100",
-                            "40"});
+                            ""});
                 table13.AddRow(new string[] {
-                            "pay",
-                            "command",
-                            "Pay for order",
-                            "300",
-                            "40"});
-#line 88
-      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table13, "Given ");
+                            "q",
+                            "hot-spot",
+                            "What if it fails?",
+                            "plced"});
+#line 105
+      await testRunner.WhenAsync("Ana adds these elements to \"Ordering\":", ((string)(null)), table13, "When ");
 #line hidden
-#line 123
-      await testRunner.WhenAsync("Ana resizes \"placed\" to 240 by 120", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 124
-      await testRunner.ThenAsync("the element \"placed\" is 240 wide and 120 high", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 125
-      await testRunner.AndAsync("the element \"placed\" is at 100,40", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 109
+      await testRunner.ThenAsync("the request fails with \"unknown-reference\" on \"elements[1].anchor\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="An update must change something")]
+        [global::Xunit.FactAttribute(DisplayName="Viewers cannot add")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "An update must change something")]
-        public async global::System.Threading.Tasks.Task AnUpdateMustChangeSomething()
+        [global::Xunit.TraitAttribute("Description", "Viewers cannot add")]
+        public async global::System.Threading.Tasks.Task ViewersCannotAdd()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "16";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("An update must change something", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "11";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Viewers cannot add", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
+#line 111
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 112
+      await testRunner.WhenAsync("Bo adds a \"domain-event\" saying \"Order Placed\" to \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 113
+      await testRunner.ThenAsync("the request is refused as \"forbidden\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Up to 500 elements can be added in one request")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "Up to 500 elements can be added in one request")]
+        public async global::System.Threading.Tasks.Task UpTo500ElementsCanBeAddedInOneRequest()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "12";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Up to 500 elements can be added in one request", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Add elements", null, tagsOfRule);
+#line 115
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 116
+      await testRunner.WhenAsync("Ana adds 500 elements to \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 117
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 118
+      await testRunner.AndAsync("the board \"Ordering\" has 500 elements", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Changing the text bumps the version and announces the full element")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "Changing the text bumps the version and announces the full element")]
+        public async global::System.Threading.Tasks.Task ChangingTheTextBumpsTheVersionAndAnnouncesTheFullElement()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "13";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Changing the text bumps the version and announces the full element", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
-#line 127
+#line 128
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -1037,31 +899,40 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "Pay for order",
                             "300",
                             "40"});
-#line 88
+#line 123
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table14, "Given ");
 #line hidden
-#line 128
-      await testRunner.WhenAsync("Ana sends an update for \"placed\" that changes nothing", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
 #line 129
-      await testRunner.ThenAsync("the request fails with \"nothing-to-change\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+      await testRunner.WhenAsync("Ana changes the text of \"placed\" to \"Order Submitted\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 130
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 131
+      await testRunner.AndAsync("the element \"placed\" says \"Order Submitted\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 132
+      await testRunner.AndAsync("the element \"placed\" is at version 2", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 133
+      await testRunner.AndAsync("the announcement carries the element \"placed\" at version 2", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Viewers can look but not touch")]
+        [global::Xunit.FactAttribute(DisplayName="A Domain Event can be marked pivotal")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Viewers can look but not touch")]
-        public async global::System.Threading.Tasks.Task ViewersCanLookButNotTouch()
+        [global::Xunit.TraitAttribute("Description", "A Domain Event can be marked pivotal")]
+        public async global::System.Threading.Tasks.Task ADomainEventCanBeMarkedPivotal()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "17";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Viewers can look but not touch", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "14";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A Domain Event can be marked pivotal", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
-#line 131
+#line 135
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -1092,37 +963,31 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "Pay for order",
                             "300",
                             "40"});
-#line 88
+#line 123
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table15, "Given ");
 #line hidden
-#line 132
-      await testRunner.WhenAsync("Bo looks up the element \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line 136
+      await testRunner.WhenAsync("Ana marks \"placed\" as pivotal", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 133
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 134
-      await testRunner.WhenAsync("Bo changes the text of \"placed\" to \"Mine\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 135
-      await testRunner.ThenAsync("the request is refused as \"forbidden\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 137
+      await testRunner.ThenAsync("the element \"placed\" is pivotal", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="A selection moves together, as one change")]
+        [global::Xunit.FactAttribute(DisplayName="A Command cannot be pivotal")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "A selection moves together, as one change")]
-        public async global::System.Threading.Tasks.Task ASelectionMovesTogetherAsOneChange()
+        [global::Xunit.TraitAttribute("Description", "A Command cannot be pivotal")]
+        public async global::System.Threading.Tasks.Task ACommandCannotBePivotal()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "18";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A selection moves together, as one change", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "15";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A Command cannot be pivotal", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Move elements", null, tagsOfRule);
-#line 145
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
+#line 139
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -1148,57 +1013,100 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "100",
                             "40"});
                 table16.AddRow(new string[] {
-                            "paid",
-                            "domain-event",
-                            "Payment Taken",
+                            "pay",
+                            "command",
+                            "Pay for order",
                             "300",
                             "40"});
-#line 140
+#line 123
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table16, "Given ");
 #line hidden
-                global::Reqnroll.Table table17 = new global::Reqnroll.Table(new string[] {
-                            "key",
-                            "x",
-                            "y"});
-                table17.AddRow(new string[] {
-                            "placed",
-                            "120",
-                            "200"});
-                table17.AddRow(new string[] {
-                            "paid",
-                            "320",
-                            "200"});
-#line 146
-      await testRunner.WhenAsync("Ana moves these elements on \"Ordering\":", ((string)(null)), table17, "When ");
+#line 140
+      await testRunner.WhenAsync("Ana marks \"pay\" as pivotal", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 150
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 151
-      await testRunner.AndAsync("the element \"placed\" is at 120,200", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 152
-      await testRunner.AndAsync("the element \"paid\" is at 320,200", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 153
-      await testRunner.AndAsync("the board \"Ordering\" is at revision 1", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 141
+      await testRunner.ThenAsync("the request fails with \"not-pivotal-type\" on \"pivotal\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Moving an element someone just deleted is skipped, not an error")]
+        [global::Xunit.FactAttribute(DisplayName="Changing a pivotal event into a command quietly drops the emphasis")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Moving an element someone just deleted is skipped, not an error")]
-        public async global::System.Threading.Tasks.Task MovingAnElementSomeoneJustDeletedIsSkippedNotAnError()
+        [global::Xunit.TraitAttribute("Description", "Changing a pivotal event into a command quietly drops the emphasis")]
+        public async global::System.Threading.Tasks.Task ChangingAPivotalEventIntoACommandQuietlyDropsTheEmphasis()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "19";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Moving an element someone just deleted is skipped, not an error", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "16";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Changing a pivotal event into a command quietly drops the emphasis", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Move elements", null, tagsOfRule);
-#line 155
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
+#line 143
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+                global::Reqnroll.Table table17 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y"});
+                table17.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "100",
+                            "40"});
+                table17.AddRow(new string[] {
+                            "pay",
+                            "command",
+                            "Pay for order",
+                            "300",
+                            "40"});
+#line 123
+      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table17, "Given ");
+#line hidden
+#line 144
+      await testRunner.GivenAsync("Ana marks \"placed\" as pivotal", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+#line 145
+      await testRunner.WhenAsync("Ana changes the type of \"placed\" to \"command\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 146
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 147
+      await testRunner.AndAsync("the element \"placed\" is a \"command\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 148
+      await testRunner.AndAsync("the element \"placed\" is not pivotal", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="A stale expected version is refused and names the current one")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "A stale expected version is refused and names the current one")]
+        public async global::System.Threading.Tasks.Task AStaleExpectedVersionIsRefusedAndNamesTheCurrentOne()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "17";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A stale expected version is refused and names the current one", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
+#line 150
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -1224,51 +1132,103 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "100",
                             "40"});
                 table18.AddRow(new string[] {
-                            "paid",
-                            "domain-event",
-                            "Payment Taken",
+                            "pay",
+                            "command",
+                            "Pay for order",
                             "300",
                             "40"});
-#line 140
+#line 123
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table18, "Given ");
 #line hidden
-                global::Reqnroll.Table table19 = new global::Reqnroll.Table(new string[] {
-                            "key",
-                            "x",
-                            "y"});
-                table19.AddRow(new string[] {
-                            "placed",
-                            "120",
-                            "200"});
-                table19.AddRow(new string[] {
-                            "deleted",
-                            "0",
-                            "0"});
-#line 156
-      await testRunner.WhenAsync("Ana moves these elements on \"Ordering\":", ((string)(null)), table19, "When ");
+#line 151
+      await testRunner.GivenAsync("Ana changes the text of \"placed\" to \"Order Submitted\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 160
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 152
+      await testRunner.WhenAsync("Ana changes the text of \"placed\" to \"Order Sent\" expecting version 1", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 161
-      await testRunner.AndAsync("the element \"placed\" is at 120,200", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 153
+      await testRunner.ThenAsync("the request fails with \"version-conflict\" on \"expectedVersion\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 154
+      await testRunner.AndAsync("the request is refused as \"conflict\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 155
+      await testRunner.AndAsync("the element \"placed\" says \"Order Submitted\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Deleting an element deletes its arrows too")]
+        [global::Xunit.FactAttribute(DisplayName="Resizing keeps the position")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Deleting an element deletes its arrows too")]
-        public async global::System.Threading.Tasks.Task DeletingAnElementDeletesItsArrowsToo()
+        [global::Xunit.TraitAttribute("Description", "Resizing keeps the position")]
+        public async global::System.Threading.Tasks.Task ResizingKeepsThePosition()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "20";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Deleting an element deletes its arrows too", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "18";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Resizing keeps the position", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Delete elements", null, tagsOfRule);
-#line 172
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
+#line 157
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+                global::Reqnroll.Table table19 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y"});
+                table19.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "100",
+                            "40"});
+                table19.AddRow(new string[] {
+                            "pay",
+                            "command",
+                            "Pay for order",
+                            "300",
+                            "40"});
+#line 123
+      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table19, "Given ");
+#line hidden
+#line 158
+      await testRunner.WhenAsync("Ana resizes \"placed\" to 240 by 120", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 159
+      await testRunner.ThenAsync("the element \"placed\" is 240 wide and 120 high", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 160
+      await testRunner.AndAsync("the element \"placed\" is at 100,40", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="An update must change something")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "An update must change something")]
+        public async global::System.Threading.Tasks.Task AnUpdateMustChangeSomething()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "19";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("An update must change something", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
+#line 162
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -1294,48 +1254,36 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "100",
                             "40"});
                 table20.AddRow(new string[] {
-                            "paid",
-                            "domain-event",
-                            "Payment Taken",
+                            "pay",
+                            "command",
+                            "Pay for order",
                             "300",
                             "40"});
-#line 166
+#line 123
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table20, "Given ");
 #line hidden
-#line 170
-      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 163
+      await testRunner.WhenAsync("Ana sends an update for \"placed\" that changes nothing", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 173
-      await testRunner.WhenAsync("Ana deletes \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 174
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 175
-      await testRunner.AndAsync("\"placed\" no longer exists", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 176
-      await testRunner.AndAsync("the announcement removes \"placed\" and 1 connection", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 177
-      await testRunner.AndAsync("the board \"Ordering\" has 1 element", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 164
+      await testRunner.ThenAsync("the request fails with \"nothing-to-change\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Deleting twice is harmless")]
+        [global::Xunit.FactAttribute(DisplayName="Viewers can look but not touch")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Deleting twice is harmless")]
-        public async global::System.Threading.Tasks.Task DeletingTwiceIsHarmless()
+        [global::Xunit.TraitAttribute("Description", "Viewers can look but not touch")]
+        public async global::System.Threading.Tasks.Task ViewersCanLookButNotTouch()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "21";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Deleting twice is harmless", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "20";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Viewers can look but not touch", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Delete elements", null, tagsOfRule);
-#line 179
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Edit an element", null, tagsOfRule);
+#line 166
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -1361,42 +1309,42 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "100",
                             "40"});
                 table21.AddRow(new string[] {
-                            "paid",
-                            "domain-event",
-                            "Payment Taken",
+                            "pay",
+                            "command",
+                            "Pay for order",
                             "300",
                             "40"});
-#line 166
+#line 123
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table21, "Given ");
 #line hidden
-#line 170
-      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line 167
+      await testRunner.WhenAsync("Bo looks up the element \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 180
-      await testRunner.GivenAsync("Ana deletes \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
-#line hidden
-#line 181
-      await testRunner.WhenAsync("Ana deletes \"placed\" again", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 182
+#line 168
       await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 169
+      await testRunner.WhenAsync("Bo changes the text of \"placed\" to \"Mine\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 170
+      await testRunner.ThenAsync("the request is refused as \"forbidden\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Two elements can be joined by an arrow")]
+        [global::Xunit.FactAttribute(DisplayName="A selection moves together, as one change")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Two elements can be joined by an arrow")]
-        public async global::System.Threading.Tasks.Task TwoElementsCanBeJoinedByAnArrow()
+        [global::Xunit.TraitAttribute("Description", "A selection moves together, as one change")]
+        public async global::System.Threading.Tasks.Task ASelectionMovesTogetherAsOneChange()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "22";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Two elements can be joined by an arrow", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "21";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A selection moves together, as one change", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Connections", null, tagsOfRule);
-#line 192
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Move elements", null, tagsOfRule);
+#line 180
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -1427,89 +1375,52 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "Payment Taken",
                             "300",
                             "40"});
-#line 187
+#line 175
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table22, "Given ");
-#line hidden
-#line 193
-      await testRunner.WhenAsync("Ana connects \"placed\" to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 194
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 195
-      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::Xunit.FactAttribute(DisplayName="An element cannot point at itself")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "An element cannot point at itself")]
-        public async global::System.Threading.Tasks.Task AnElementCannotPointAtItself()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "23";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("An element cannot point at itself", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Connections", null, tagsOfRule);
-#line 197
-    this.ScenarioInitialize(scenarioInfo, ruleInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
-  await this.FeatureBackgroundAsync();
 #line hidden
                 global::Reqnroll.Table table23 = new global::Reqnroll.Table(new string[] {
                             "key",
-                            "type",
-                            "text",
                             "x",
                             "y"});
                 table23.AddRow(new string[] {
                             "placed",
-                            "domain-event",
-                            "Order Placed",
-                            "100",
-                            "40"});
+                            "120",
+                            "200"});
                 table23.AddRow(new string[] {
                             "paid",
-                            "domain-event",
-                            "Payment Taken",
-                            "300",
-                            "40"});
+                            "320",
+                            "200"});
+#line 181
+      await testRunner.WhenAsync("Ana moves these elements on \"Ordering\":", ((string)(null)), table23, "When ");
+#line hidden
+#line 185
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 186
+      await testRunner.AndAsync("the element \"placed\" is at 120,200", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
 #line 187
-      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table23, "Given ");
+      await testRunner.AndAsync("the element \"paid\" is at 320,200", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 198
-      await testRunner.WhenAsync("Ana connects \"placed\" to \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 199
-      await testRunner.ThenAsync("the request fails with \"self-connection\" on \"to\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 188
+      await testRunner.AndAsync("the board \"Ordering\" is at revision 1", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="An arrow can be deleted")]
+        [global::Xunit.FactAttribute(DisplayName="Moving an element someone just deleted is skipped, not an error")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "An arrow can be deleted")]
-        public async global::System.Threading.Tasks.Task AnArrowCanBeDeleted()
+        [global::Xunit.TraitAttribute("Description", "Moving an element someone just deleted is skipped, not an error")]
+        public async global::System.Threading.Tasks.Task MovingAnElementSomeoneJustDeletedIsSkippedNotAnError()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "24";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("An arrow can be deleted", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "22";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Moving an element someone just deleted is skipped, not an error", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Connections", null, tagsOfRule);
-#line 201
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Move elements", null, tagsOfRule);
+#line 190
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -1540,132 +1451,46 @@ namespace EventStorming.Specs.Features.BoardModelling
                             "Payment Taken",
                             "300",
                             "40"});
-#line 187
+#line 175
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table24, "Given ");
-#line hidden
-#line 202
-      await testRunner.GivenAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
-#line hidden
-#line 203
-      await testRunner.WhenAsync("Ana deletes the connection from \"placed\" to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 204
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 205
-      await testRunner.AndAsync("\"placed\" has no connections", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::Xunit.FactAttribute(DisplayName="Connections can be listed")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Connections can be listed")]
-        public async global::System.Threading.Tasks.Task ConnectionsCanBeListed()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "25";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Connections can be listed", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Connections", null, tagsOfRule);
-#line 207
-    this.ScenarioInitialize(scenarioInfo, ruleInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
-  await this.FeatureBackgroundAsync();
 #line hidden
                 global::Reqnroll.Table table25 = new global::Reqnroll.Table(new string[] {
                             "key",
-                            "type",
-                            "text",
                             "x",
                             "y"});
                 table25.AddRow(new string[] {
                             "placed",
-                            "domain-event",
-                            "Order Placed",
-                            "100",
-                            "40"});
+                            "120",
+                            "200"});
                 table25.AddRow(new string[] {
-                            "paid",
-                            "domain-event",
-                            "Payment Taken",
-                            "300",
-                            "40"});
-#line 187
-      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table25, "Given ");
+                            "deleted",
+                            "0",
+                            "0"});
+#line 191
+      await testRunner.WhenAsync("Ana moves these elements on \"Ordering\":", ((string)(null)), table25, "When ");
 #line hidden
-#line 208
-      await testRunner.GivenAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line 195
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-#line 209
-      await testRunner.WhenAsync("Bo lists the connections of \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 210
-      await testRunner.ThenAsync("1 connection is listed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 196
+      await testRunner.AndAsync("the element \"placed\" is at 120,200", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Elements come in pages")]
+        [global::Xunit.FactAttribute(DisplayName="Deleting an element deletes its arrows too")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Elements come in pages")]
-        public async global::System.Threading.Tasks.Task ElementsComeInPages()
+        [global::Xunit.TraitAttribute("Description", "Deleting an element deletes its arrows too")]
+        public async global::System.Threading.Tasks.Task DeletingAnElementDeletesItsArrowsToo()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "26";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Elements come in pages", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "23";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Deleting an element deletes its arrows too", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("List elements", null, tagsOfRule);
-#line 214
-    this.ScenarioInitialize(scenarioInfo, ruleInfo);
-#line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
-  await this.FeatureBackgroundAsync();
-#line hidden
-#line 215
-      await testRunner.WhenAsync("Ana adds 5 elements to \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 216
-      await testRunner.AndAsync("Bo lists the elements of \"Ordering\" 2 at a time", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 217
-      await testRunner.ThenAsync("3 pages hold 5 elements in total", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::Xunit.FactAttribute(DisplayName="Elements can be listed by type")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Elements can be listed by type")]
-        public async global::System.Threading.Tasks.Task ElementsCanBeListedByType()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "27";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Elements can be listed by type", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("List elements", null, tagsOfRule);
-#line 219
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Delete elements", null, tagsOfRule);
+#line 207
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -1681,78 +1506,58 @@ namespace EventStorming.Specs.Features.BoardModelling
                 global::Reqnroll.Table table26 = new global::Reqnroll.Table(new string[] {
                             "key",
                             "type",
-                            "text"});
+                            "text",
+                            "x",
+                            "y"});
                 table26.AddRow(new string[] {
-                            "e1",
+                            "placed",
                             "domain-event",
-                            "Order Placed"});
+                            "Order Placed",
+                            "100",
+                            "40"});
                 table26.AddRow(new string[] {
-                            "h1",
-                            "hot-spot",
-                            "Too slow?"});
-                table26.AddRow(new string[] {
-                            "e2",
+                            "paid",
                             "domain-event",
-                            "Payment Taken"});
-#line 220
+                            "Payment Taken",
+                            "300",
+                            "40"});
+#line 201
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table26, "Given ");
 #line hidden
-#line 225
-      await testRunner.WhenAsync("Bo lists the \"domain-event\" elements of \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line 205
+      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 226
-      await testRunner.ThenAsync("2 elements are listed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 208
+      await testRunner.WhenAsync("Ana deletes \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-            }
-            await this.ScenarioCleanupAsync();
-        }
-        
-        [global::Xunit.FactAttribute(DisplayName="Listing by an unknown type explains the valid ones")]
-        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "Listing by an unknown type explains the valid ones")]
-        public async global::System.Threading.Tasks.Task ListingByAnUnknownTypeExplainsTheValidOnes()
-        {
-            string[] tagsOfScenario = ((string[])(null));
-            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "28";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Listing by an unknown type explains the valid ones", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
-            string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("List elements", null, tagsOfRule);
-#line 228
-    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line 209
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
-            {
-                await testRunner.SkipScenarioAsync();
-            }
-            else
-            {
-                await this.ScenarioStartAsync();
-#line 5
-  await this.FeatureBackgroundAsync();
+#line 210
+      await testRunner.AndAsync("\"placed\" no longer exists", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 229
-      await testRunner.WhenAsync("Bo lists the \"event\" elements of \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line 211
+      await testRunner.AndAsync("the announcement removes \"placed\" and 1 connection", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 230
-      await testRunner.ThenAsync("the request fails with \"unknown-element-type\" on \"type\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line 212
+      await testRunner.AndAsync("the board \"Ordering\" has 1 element", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="A duplicate copies every element and arrow into a new board")]
+        [global::Xunit.FactAttribute(DisplayName="Deleting twice is harmless")]
         [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
-        [global::Xunit.TraitAttribute("Description", "A duplicate copies every element and arrow into a new board")]
-        public async global::System.Threading.Tasks.Task ADuplicateCopiesEveryElementAndArrowIntoANewBoard()
+        [global::Xunit.TraitAttribute("Description", "Deleting twice is harmless")]
+        public async global::System.Threading.Tasks.Task DeletingTwiceIsHarmless()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "29";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A duplicate copies every element and arrow into a new board", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string pickleIndex = "24";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Deleting twice is harmless", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Duplicate a board", null, tagsOfRule);
-#line 234
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Delete elements", null, tagsOfRule);
+#line 214
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -1768,28 +1573,445 @@ namespace EventStorming.Specs.Features.BoardModelling
                 global::Reqnroll.Table table27 = new global::Reqnroll.Table(new string[] {
                             "key",
                             "type",
-                            "text"});
+                            "text",
+                            "x",
+                            "y"});
                 table27.AddRow(new string[] {
                             "placed",
                             "domain-event",
-                            "Order Placed"});
+                            "Order Placed",
+                            "100",
+                            "40"});
                 table27.AddRow(new string[] {
                             "paid",
                             "domain-event",
-                            "Payment Taken"});
-#line 235
+                            "Payment Taken",
+                            "300",
+                            "40"});
+#line 201
       await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table27, "Given ");
 #line hidden
-#line 239
+#line 205
       await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-#line 240
-      await testRunner.WhenAsync("Ana duplicates the board \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line 215
+      await testRunner.GivenAsync("Ana deletes \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-#line 241
+#line 216
+      await testRunner.WhenAsync("Ana deletes \"placed\" again", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 217
       await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Two elements can be joined by an arrow")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "Two elements can be joined by an arrow")]
+        public async global::System.Threading.Tasks.Task TwoElementsCanBeJoinedByAnArrow()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "25";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Two elements can be joined by an arrow", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Connections", null, tagsOfRule);
+#line 227
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+                global::Reqnroll.Table table28 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y"});
+                table28.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "100",
+                            "40"});
+                table28.AddRow(new string[] {
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "300",
+                            "40"});
+#line 222
+      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table28, "Given ");
+#line hidden
+#line 228
+      await testRunner.WhenAsync("Ana connects \"placed\" to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 229
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 230
+      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="An element cannot point at itself")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "An element cannot point at itself")]
+        public async global::System.Threading.Tasks.Task AnElementCannotPointAtItself()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "26";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("An element cannot point at itself", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Connections", null, tagsOfRule);
+#line 232
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+                global::Reqnroll.Table table29 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y"});
+                table29.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "100",
+                            "40"});
+                table29.AddRow(new string[] {
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "300",
+                            "40"});
+#line 222
+      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table29, "Given ");
+#line hidden
+#line 233
+      await testRunner.WhenAsync("Ana connects \"placed\" to \"placed\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 234
+      await testRunner.ThenAsync("the request fails with \"self-connection\" on \"to\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="An arrow can be deleted")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "An arrow can be deleted")]
+        public async global::System.Threading.Tasks.Task AnArrowCanBeDeleted()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "27";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("An arrow can be deleted", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Connections", null, tagsOfRule);
+#line 236
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+                global::Reqnroll.Table table30 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y"});
+                table30.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "100",
+                            "40"});
+                table30.AddRow(new string[] {
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "300",
+                            "40"});
+#line 222
+      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table30, "Given ");
+#line hidden
+#line 237
+      await testRunner.GivenAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+#line 238
+      await testRunner.WhenAsync("Ana deletes the connection from \"placed\" to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 239
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 240
+      await testRunner.AndAsync("\"placed\" has no connections", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Connections can be listed")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "Connections can be listed")]
+        public async global::System.Threading.Tasks.Task ConnectionsCanBeListed()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "28";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Connections can be listed", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Connections", null, tagsOfRule);
 #line 242
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+                global::Reqnroll.Table table31 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y"});
+                table31.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "100",
+                            "40"});
+                table31.AddRow(new string[] {
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "300",
+                            "40"});
+#line 222
+      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table31, "Given ");
+#line hidden
+#line 243
+      await testRunner.GivenAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+#line 244
+      await testRunner.WhenAsync("Bo lists the connections of \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 245
+      await testRunner.ThenAsync("1 connection is listed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Elements come in pages")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "Elements come in pages")]
+        public async global::System.Threading.Tasks.Task ElementsComeInPages()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "29";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Elements come in pages", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("List elements", null, tagsOfRule);
+#line 249
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 250
+      await testRunner.WhenAsync("Ana adds 5 elements to \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 251
+      await testRunner.AndAsync("Bo lists the elements of \"Ordering\" 2 at a time", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 252
+      await testRunner.ThenAsync("3 pages hold 5 elements in total", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Elements can be listed by type")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "Elements can be listed by type")]
+        public async global::System.Threading.Tasks.Task ElementsCanBeListedByType()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "30";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Elements can be listed by type", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("List elements", null, tagsOfRule);
+#line 254
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+                global::Reqnroll.Table table32 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text"});
+                table32.AddRow(new string[] {
+                            "e1",
+                            "domain-event",
+                            "Order Placed"});
+                table32.AddRow(new string[] {
+                            "h1",
+                            "hot-spot",
+                            "Too slow?"});
+                table32.AddRow(new string[] {
+                            "e2",
+                            "domain-event",
+                            "Payment Taken"});
+#line 255
+      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table32, "Given ");
+#line hidden
+#line 260
+      await testRunner.WhenAsync("Bo lists the \"domain-event\" elements of \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 261
+      await testRunner.ThenAsync("2 elements are listed", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Listing by an unknown type explains the valid ones")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "Listing by an unknown type explains the valid ones")]
+        public async global::System.Threading.Tasks.Task ListingByAnUnknownTypeExplainsTheValidOnes()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "31";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Listing by an unknown type explains the valid ones", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("List elements", null, tagsOfRule);
+#line 263
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 264
+      await testRunner.WhenAsync("Bo lists the \"event\" elements of \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 265
+      await testRunner.ThenAsync("the request fails with \"unknown-element-type\" on \"type\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="A duplicate copies every element and arrow into a new board")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "Elements on a board")]
+        [global::Xunit.TraitAttribute("Description", "A duplicate copies every element and arrow into a new board")]
+        public async global::System.Threading.Tasks.Task ADuplicateCopiesEveryElementAndArrowIntoANewBoard()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "32";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A duplicate copies every element and arrow into a new board", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Duplicate a board", null, tagsOfRule);
+#line 269
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+                global::Reqnroll.Table table33 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text"});
+                table33.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed"});
+                table33.AddRow(new string[] {
+                            "paid",
+                            "domain-event",
+                            "Payment Taken"});
+#line 270
+      await testRunner.GivenAsync("the board \"Ordering\" has these elements:", ((string)(null)), table33, "Given ");
+#line hidden
+#line 274
+      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 275
+      await testRunner.WhenAsync("Ana duplicates the board \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 276
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 277
       await testRunner.AndAsync("\"Food delivery\" has a board called \"Copy of Ordering\" with 2 elements", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
             }
@@ -1803,11 +2025,11 @@ namespace EventStorming.Specs.Features.BoardModelling
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "30";
+            string pickleIndex = "33";
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Viewers cannot duplicate", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Duplicate a board", null, tagsOfRule);
-#line 244
+#line 279
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -1820,10 +2042,10 @@ namespace EventStorming.Specs.Features.BoardModelling
 #line 5
   await this.FeatureBackgroundAsync();
 #line hidden
-#line 245
+#line 280
       await testRunner.WhenAsync("Bo duplicates the board \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 246
+#line 281
       await testRunner.ThenAsync("the request is refused as \"forbidden\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }

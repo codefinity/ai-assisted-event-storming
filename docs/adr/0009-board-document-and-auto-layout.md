@@ -20,7 +20,8 @@ Export and import should use the same format, so a board can round-trip.
   - Boundaries become boxes around their members.
   - Pivotal events get extra space.
   - Explicit positions are kept.
-  - Content added later starts to the right of what already exists.
+  - Content added later continues after the last sticky already there (swimlanes and boundaries are not counted, since they span the timeline).
+  - Existing swimlanes and boundaries that new elements name grow to hold them, in the same transaction. The grown structures go out in the same change set, and the result lists them separately (`resized`).
 - **Export** writes the same shape, with every position filled in and element ids as keys. Membership in lanes and boundaries is worked out from geometry.
 - The same drafting code (`DraftPlanner`) validates and lays out import, replace and bulk, so all three share the same rules and errors.
 

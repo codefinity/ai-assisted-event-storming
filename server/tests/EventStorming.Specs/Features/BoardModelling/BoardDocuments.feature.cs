@@ -190,16 +190,16 @@ namespace EventStorming.Specs.Features.BoardModelling
 #line 28
       await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table1 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table4 = new global::Reqnroll.Table(new string[] {
                             "event"});
-                table1.AddRow(new string[] {
+                table4.AddRow(new string[] {
                             "Order Placed"});
-                table1.AddRow(new string[] {
+                table4.AddRow(new string[] {
                             "Payment Taken"});
-                table1.AddRow(new string[] {
+                table4.AddRow(new string[] {
                             "Meal Cooked"});
 #line 29
-      await testRunner.AndAsync("the board \"Online food ordering\" reads left to right:", ((string)(null)), table1, "And ");
+      await testRunner.AndAsync("the board \"Online food ordering\" reads left to right:", ((string)(null)), table4, "And ");
 #line hidden
 #line 34
       await testRunner.AndAsync("\"late\" is in the same column as \"paid\", below it", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -428,23 +428,23 @@ namespace EventStorming.Specs.Features.BoardModelling
   ""connections"": [ { ""from"": ""placed"", ""to"": ""cookd"" } ]
 }", ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-                global::Reqnroll.Table table2 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table5 = new global::Reqnroll.Table(new string[] {
                             "field",
                             "code"});
-                table2.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "version",
                             "unsupported-version"});
-                table2.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "board.level",
                             "unknown-level"});
-                table2.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "board.name",
                             "required"});
-                table2.AddRow(new string[] {
+                table5.AddRow(new string[] {
                             "elements[1].key",
                             "duplicate-key"});
 #line 115
-      await testRunner.ThenAsync("the request fails with these failures:", ((string)(null)), table2, "Then ");
+      await testRunner.ThenAsync("the request fails with these failures:", ((string)(null)), table5, "Then ");
 #line hidden
 #line 121
       await testRunner.AndAsync("every failure says how to fix it", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
@@ -487,17 +487,17 @@ namespace EventStorming.Specs.Features.BoardModelling
   ""connections"": [ { ""from"": ""cooked"", ""to"": ""cookd"" } ]
 }", ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-                global::Reqnroll.Table table3 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table6 = new global::Reqnroll.Table(new string[] {
                             "field",
                             "code"});
-                table3.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "elements[1].swimlane",
                             "not-a-swimlane"});
-                table3.AddRow(new string[] {
+                table6.AddRow(new string[] {
                             "connections[0].to",
                             "unknown-reference"});
 #line 135
-      await testRunner.ThenAsync("the request fails with these failures:", ((string)(null)), table3, "Then ");
+      await testRunner.ThenAsync("the request fails with these failures:", ((string)(null)), table6, "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -564,16 +564,16 @@ namespace EventStorming.Specs.Features.BoardModelling
 #line 150
       await testRunner.GivenAsync("\"Food delivery\" has a \"big-picture\" board called \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-                global::Reqnroll.Table table4 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table7 = new global::Reqnroll.Table(new string[] {
                             "key",
                             "type",
                             "text"});
-                table4.AddRow(new string[] {
+                table7.AddRow(new string[] {
                             "old",
                             "domain-event",
                             "Old Event"});
 #line 151
-      await testRunner.AndAsync("the board \"Ordering\" has these elements:", ((string)(null)), table4, "And ");
+      await testRunner.AndAsync("the board \"Ordering\" has these elements:", ((string)(null)), table7, "And ");
 #line hidden
 #line 156
       await testRunner.WhenAsync("Ana replaces the content of \"Ordering\" with:", "{ \"elements\": [ { \"key\": \"new\", \"type\": \"domain-event\", \"text\": \"New Event\" } ] }" +
@@ -622,16 +622,16 @@ namespace EventStorming.Specs.Features.BoardModelling
 #line 150
       await testRunner.GivenAsync("\"Food delivery\" has a \"big-picture\" board called \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
-                global::Reqnroll.Table table5 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table8 = new global::Reqnroll.Table(new string[] {
                             "key",
                             "type",
                             "text"});
-                table5.AddRow(new string[] {
+                table8.AddRow(new string[] {
                             "old",
                             "domain-event",
                             "Old Event"});
 #line 151
-      await testRunner.AndAsync("the board \"Ordering\" has these elements:", ((string)(null)), table5, "And ");
+      await testRunner.AndAsync("the board \"Ordering\" has these elements:", ((string)(null)), table8, "And ");
 #line hidden
 #line 166
       await testRunner.WhenAsync("Ana replaces the content of \"Ordering\" with:", "{ \"board\": { \"level\": \"software-design\" }, \"elements\": [] }", ((global::Reqnroll.Table)(null)), "When ");

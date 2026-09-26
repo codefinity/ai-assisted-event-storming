@@ -15,8 +15,7 @@ namespace EventStorming.Persistence.MongoDb.IntegrationTests;
 /// </summary>
 public sealed class MongoContainer : IAsyncLifetime
 {
-    private readonly MongoDbContainer container = new MongoDbBuilder()
-        .WithImage("mongo:8.0")
+    private readonly MongoDbContainer container = new MongoDbBuilder("mongo:8.0")
         .WithReplicaSet()
         .Build();
 

@@ -76,7 +76,13 @@ public sealed record BulkElementsRequest(
     [property: Description("Up to 500 elements, in timeline order. Keys let connections and other elements refer to them.")] IReadOnlyList<DocumentElementDto>? Elements,
     [property: Description("Connections between keys in this request, or ids of existing elements.")] IReadOnlyList<DocumentConnectionDto>? Connections);
 
-public sealed record BulkElementsResponse(IReadOnlyList<PublicElement> Elements, IReadOnlyList<PublicConnection> Connections, IReadOnlyDictionary<string, Guid> Keys);
+/// <param name="Elements">The new elements.</param>
+/// <param name="Resized">Swimlanes and boundaries already on the board that grew to hold the new elements.</param>
+public sealed record BulkElementsResponse(
+    IReadOnlyList<PublicElement> Elements,
+    IReadOnlyList<PublicConnection> Connections,
+    IReadOnlyDictionary<string, Guid> Keys,
+    [property: Description("Swimlanes and boundaries already on the board that grew to hold the new elements.")] IReadOnlyList<PublicElement> Resized);
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record UpdateElementRequestV1(

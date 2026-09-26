@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\application\EventStorming.PublicIntegration\EventStorming.PublicIntegration.csproj" />
     <ProjectReference Include="..\EventStorming.Api.Rest\EventStorming.Api.Rest.csproj" />
     <ProjectReference Include="..\EventStorming.Realtime.SignalR\EventStorming.Realtime.SignalR.csproj" />
+    <ProjectReference Include="..\EventStorming.Mcp\EventStorming.Mcp.csproj" />
     <ProjectReference Include="..\..\driven-adapters\EventStorming.Persistence.MongoDb\EventStorming.Persistence.MongoDb.csproj" />
     <ProjectReference Include="..\..\driven-adapters\EventStorming.Security\EventStorming.Security.csproj" />
     <ProjectReference Include="..\..\driven-adapters\EventStorming.SystemClock\EventStorming.SystemClock.csproj" />

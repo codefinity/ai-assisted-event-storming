@@ -1,4 +1,5 @@
 using EventStorming.BoardModelling.Drafting;
+using EventStorming.BoardModelling.Layout;
 using EventStorming.BoardModelling.Model;
 using EventStorming.BoardModelling.Shared;
 using EventStorming.SharedKernel;
@@ -45,7 +46,8 @@ public sealed class AddElementsCommandHandler(
             ? new Dictionary<Guid, Element>()
             : (await store.FindElements(command.BoardId, referencedIds, cancellationToken)).ToDictionary(element => element.Id);
 
-        var stats = await store.Stats(command.BoardId, cancellationToken);
+        var structureTypes = registry.Types.Where(type => type.LayoutRole != LayoutRole.Item).Select(type => type.Id).ToList();
+        var stats = await store.Stats(command.BoardId, structureTypes, cancellationToken);
         if (stats.ElementCount + command.Elements.Count > BoardLimits.MaxElements)
         {
             return AddElementsResult.Failed(new Failure(FailureKind.LimitExceeded, "board-limit-exceeded",
@@ -61,9 +63,14 @@ public sealed class AddElementsCommandHandler(
         }
 
         var now = clock.UtcNow;
-        var origin = stats.Right is { } right
-            ? new Position(right + ContinuationGap, stats.Top ?? 0)
-            : new Position(0, 0);
+        // The timeline continues after the last sticky, so new stickies land inside the swimlanes and
+        // boundaries already drawn (which then grow to hold them), not after their far edge.
+        var origin = stats switch
+        {
+            { ItemRight: { } itemRight } => new Position(itemRight + ContinuationGap, stats.Top ?? 0),
+            { Left: { } left } => new Position(left + TimelineLayout.LaneHeader, stats.Top ?? 0),
+            _ => new Position(0, 0),
+        };
 
         var plan = DraftPlanner.Plan(
             command.Elements.Select((element, index) => new ElementDraft(
@@ -79,11 +86,15 @@ public sealed class AddElementsCommandHandler(
             return AddElementsResult.Failed(plan.Failures);
         }
 
-        var inserted = await store.Insert(command.BoardId, plan.Content.Elements, plan.Content.Connections, command.Actor.Ref, now, cancellationToken);
+        var inserted = await store.Insert(command.BoardId, plan.Content.Elements, plan.Content.Connections, plan.Content.Grown, command.Actor.Ref, now, cancellationToken);
         var changes = new BoardChangeSet(command.BoardId, inserted.Revision, command.OperationId, command.Actor.Ref, inserted.Elements, [], inserted.Connections, []);
 
         broadcaster.ContentChanged(changes);
-        return AddElementsResult.Succeeded(new AddedElements(changes, plan.Content.KeyedIds));
+
+        var stored = inserted.Elements.ToDictionary(element => element.Id);
+        var created = plan.Content.Elements.Where(element => stored.ContainsKey(element.Id)).Select(element => stored[element.Id]).ToList();
+        var grown = plan.Content.Grown.Where(element => stored.ContainsKey(element.Id)).Select(element => stored[element.Id]).ToList();
+        return AddElementsResult.Succeeded(new AddedElements(changes, plan.Content.KeyedIds, created, grown));
     }
 }
 

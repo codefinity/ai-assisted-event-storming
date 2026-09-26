@@ -94,6 +94,34 @@ public sealed class PublicApiTests(MongoServer mongo) : IAsyncLifetime
         problem.GetProperty("detail").GetString()!.ShouldContain("'txt' is not a field here");
     }
 
+    [Fact]
+    public async Task An_element_added_to_a_full_swimlane_comes_back_itself_and_the_lane_grows_to_hold_it()
+    {
+        var (_, key) = await TeamWithKey("read", "write");
+        var api = host.ApiKeyClient(key);
+        var imported = await (await api.PostAsync("/api/v1/boards/import", Json("""
+            { "version": 1, "board": { "name": "Lanes", "level": "big-picture" },
+              "elements": [ { "key": "lane", "type": "swimlane", "text": "Customer", "position": { "x": 0, "y": 0 }, "size": { "width": 400, "height": 240 } },
+                            { "key": "placed", "type": "domain-event", "text": "Order Placed", "swimlane": "lane", "position": { "x": 200, "y": 40 } } ] }
+            """))).Content.ReadFromJsonAsync<JsonElement>();
+        var boardId = imported.GetProperty("board").GetProperty("id").GetGuid();
+        var laneId = imported.GetProperty("keys").GetProperty("lane").GetGuid();
+
+        var created = await api.PostAsync($"/api/v1/boards/{boardId}/elements", Json($$"""{ "type": "domain-event", "text": "Payment Taken", "swimlane": "{{laneId}}" }"""));
+        created.StatusCode.ShouldBe(HttpStatusCode.Created, await created.Content.ReadAsStringAsync());
+        var element = await created.Content.ReadFromJsonAsync<JsonElement>();
+        element.GetProperty("text").GetString().ShouldBe("Payment Taken");
+
+        var lane = await api.GetFromJsonAsync<JsonElement>($"/api/v1/boards/{boardId}/elements/{laneId}");
+        var right = element.GetProperty("position").GetProperty("x").GetDouble() + element.GetProperty("size").GetProperty("width").GetDouble();
+        (lane.GetProperty("position").GetProperty("x").GetDouble() + lane.GetProperty("size").GetProperty("width").GetDouble()).ShouldBeGreaterThan(right);
+
+        var bulk = await (await api.PostAsync($"/api/v1/boards/{boardId}/elements/bulk", Json($$"""{ "elements": [ { "type": "domain-event", "text": "Meal Cooked", "swimlane": "{{laneId}}" } ] }""")))
+            .Content.ReadFromJsonAsync<JsonElement>();
+        bulk.GetProperty("elements").EnumerateArray().Select(item => item.GetProperty("text").GetString()).ShouldBe(["Meal Cooked"]);
+        bulk.GetProperty("resized").EnumerateArray().Select(item => item.GetProperty("id").GetGuid()).ShouldBe([laneId]);
+    }
+
     [Theory]
     [InlineData("/api/v1/boards", """{ "name": "x", "level": "big-picture", "colour": "red" }""", "#/colour")]
     [InlineData("/api/v1/boards/{board}/elements", """{ "type": "domain-event", "text": "Order Placed", "position": { "x": 1, "y": 2, "z": 3 } }""", "#/position/z")]

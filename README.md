@@ -4,7 +4,8 @@ A web-based, real-time, collaborative [EventStorming](https://www.eventstorming.
 business processes together on an infinite board of stickies (Domain Events, Commands, Actors, Policies,
 Read Models, External Systems, Aggregates, Hot Spots, Opportunities), with swimlanes, boundaries,
 pivotal events and arrows, at three levels: Big Picture, Process Modelling and Software Design.
-Other systems and LLM agents build boards through a public REST API, and their changes appear live.
+Other systems and AI agents build boards through a public REST API or an MCP server, and their
+changes appear live.
 
 - **Collaborate live:** see who is on the board, their cursors, what they are editing and what they are dragging. Changes merge deterministically, and the board resyncs cleanly after a dropped connection.
 - **Model fast:**
@@ -18,6 +19,7 @@ Other systems and LLM agents build boards through a public REST API, and their c
   - API keys with scopes;
   - one-call import with automatic timeline layout;
   - idempotency keys, per-key rate limits, and RFC 9457 errors that name the field and the fix.
+- **MCP server** (`/mcp`): AI agents (Claude, VS Code, Cursor and other MCP clients) draw and edit boards with tools such as `create_board` and `add_to_board`, with the modelling guide as a resource and ready-made prompts.
 
 ## Contents
 
@@ -46,6 +48,7 @@ docker compose run --rm api seed     # optional: a demo account, team and sample
 | Web app | http://localhost:3000 |
 | API reference (Scalar) | http://localhost:5080/docs |
 | Public API index | http://localhost:5080/api/v1 |
+| MCP server (for agents; needs an API key) | http://localhost:5080/mcp |
 | Mailpit (invitation emails) | http://localhost:8025 |
 
 The seed creates `demo@eventstorming.local` with the password `eventstorming` (set `SEED_DEMO_PASSWORD`
@@ -82,7 +85,7 @@ the Docker stack if it is running, and the local API otherwise. MongoDB is publi
 | Behaviour specs (Reqnroll + xUnit v3) | Every use case against in-memory fakes, in Given/When/Then | `dotnet test --project server/tests/EventStorming.Specs` |
 | Architecture (ArchUnitNET) | Rings, context independence, slice shape, no tactical DDD, composition | `dotnet test --project server/tests/EventStorming.Architecture.Tests` |
 | MongoDB integration (Testcontainers) | Every store adapter against a real replica set | `dotnet test --project server/tests/EventStorming.Persistence.MongoDb.IntegrationTests` |
-| Host integration (WebApplicationFactory + Testcontainers) | HTTP and SignalR end to end: sessions, errors, the public API, live changes between two people, schema drift | `dotnet test --project server/tests/EventStorming.Host.IntegrationTests` |
+| Host integration (WebApplicationFactory + Testcontainers) | HTTP, SignalR and MCP end to end: sessions, errors, the public API, live changes between two people, an agent drawing through the official MCP client, schema drift | `dotnet test --project server/tests/EventStorming.Host.IntegrationTests` |
 | Web (Vitest + React Testing Library) | Sync model, realtime middleware (fake hub), commands and undo, clipboard, export, the editor from the keyboard, render counts, module boundaries | `cd web && npm test` |
 | End to end (Playwright) | Two people sign up, share a team and a board, and see each other's changes live | `cd tests/e2e && npm install && npx playwright install chromium && npm test` (with the stack running) |
 
@@ -109,12 +112,12 @@ flowchart LR
   BM["Board Modelling<br/><b>core</b>"]
   CO["Collaboration<br/><i>supporting</i>"]
   PI["Public Integration<br/><i>supporting</i>"]
-  EXT["External systems & LLM agents"]
+  EXT["External systems & AI agents"]
   ID -- "Conformist: account id and name from the token" --> TM
   TM -- "Customer–Supplier, ACL: team role → board permission" --> BM
   BM -- "Published Language: board change sets" --> CO
   BM -- "Customer–Supplier: PI calls BM use cases" --> PI
-  PI == "Open Host Service: /api/v1, Board Document v1, JSON Schema" ==> EXT
+  PI == "Open Host Service: /api/v1 and /mcp, Board Document v1, JSON Schema" ==> EXT
 ```
 
 | Context | Owns |
@@ -150,7 +153,7 @@ sequenceDiagram
   Feed-->>B: boardChanged (applied if newer than what B has)
 ```
 
-The public API calls the same use cases, so its changes reach open boards the same way.
+The public API and the MCP server call the same use cases, so their changes reach open boards the same way.
 
 ## Folder structure
 
@@ -167,6 +170,7 @@ server/
     driving-adapters/
       EventStorming.Api.Rest       /api/app (web app) and /api/v1 (public), Problem Details, idempotency
       EventStorming.Realtime.SignalR  the board hub and the feed relay
+      EventStorming.Mcp            the MCP server: drawing tools, resources and prompts for agents
       EventStorming.Host           composition root, configuration, seeding
     driven-adapters/
       EventStorming.Persistence.MongoDb  stores per slice, the ACL, indexes
@@ -271,7 +275,8 @@ The web app has one setting, `NEXT_PUBLIC_API_URL` (default `http://localhost:50
 ## Documentation
 
 - [`docs/api.md`](docs/api.md): the public API: authentication, conventions, every endpoint with examples, errors, idempotency, rate limits, versioning.
-- [`docs/llm-guide.md`](docs/llm-guide.md): for LLM agents: the notation, the Board Document, a worked example, common mistakes. Also served at `/docs/llm-guide.md`.
+- [`docs/mcp.md`](docs/mcp.md): the MCP server: connecting Claude Code, VS Code, Cursor and other clients, the tools, resources and prompts.
+- [`docs/llm-guide.md`](docs/llm-guide.md): for LLM agents: the notation, the Board Document, a worked example, common mistakes. Also served at `/docs/llm-guide.md` and as the MCP resource `eventstorming://guide`.
 - [`docs/glossary.md`](docs/glossary.md): the ubiquitous language.
 - [`docs/adr/`](docs/adr): architecture decision records.
 - [`docs/schemas/board-document.v1.schema.json`](docs/schemas/board-document.v1.schema.json): the Board Document's JSON Schema.

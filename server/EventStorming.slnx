@@ -10,6 +10,7 @@
   <Folder Name="/driving-adapters/">
     <Project Path="src/driving-adapters/EventStorming.Host/EventStorming.Host.csproj" />
     <Project Path="src/driving-adapters/EventStorming.Api.Rest/EventStorming.Api.Rest.csproj" />
+    <Project Path="src/driving-adapters/EventStorming.Mcp/EventStorming.Mcp.csproj" />
     <Project Path="src/driving-adapters/EventStorming.Realtime.SignalR/EventStorming.Realtime.SignalR.csproj" />
   </Folder>
   <Folder Name="/driven-adapters/">

@@ -318,17 +318,17 @@ namespace EventStorming.Specs.Features.Identity
 #line 29
     await testRunner.WhenAsync("\"\" signs in with password \"\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-                global::Reqnroll.Table table36 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table38 = new global::Reqnroll.Table(new string[] {
                             "field",
                             "code"});
-                table36.AddRow(new string[] {
+                table38.AddRow(new string[] {
                             "email",
                             "required"});
-                table36.AddRow(new string[] {
+                table38.AddRow(new string[] {
                             "password",
                             "required"});
 #line 30
-    await testRunner.ThenAsync("the request fails with these failures:", ((string)(null)), table36, "Then ");
+    await testRunner.ThenAsync("the request fails with these failures:", ((string)(null)), table38, "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

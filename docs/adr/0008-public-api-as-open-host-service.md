@@ -31,5 +31,5 @@ Other systems and LLM agents must be able to read and build boards. The brief as
 
 ## Consequences
 
-- An MCP server can be another thin driving adapter over the same use cases, reusing the Board Document and the problem catalogue. No core change is needed.
+- An MCP server can be another thin driving adapter over the same use cases, reusing the Board Document and the problem catalogue. No core change is needed. It now exists: see ADR 11.
 - Changes made through the API reach open boards live, because they go through the same broadcaster.

@@ -136,9 +136,10 @@ public sealed class InMemoryBoards :
         }));
     }
 
-    public Task<BoardContentStats> Stats(Guid boardId, CancellationToken cancellationToken)
+    public Task<BoardContentStats> Stats(Guid boardId, IReadOnlyCollection<string> structureTypes, CancellationToken cancellationToken)
     {
         var elements = Elements.Where(element => element.BoardId == boardId).ToList();
+        var items = elements.Where(element => !structureTypes.Contains(element.Type)).ToList();
         var connectionCount = Connections.Count(connection => connection.BoardId == boardId);
         return Task.FromResult(elements.Count == 0
             ? new BoardContentStats(0, connectionCount, null, null, null, null)
@@ -148,14 +149,33 @@ public sealed class InMemoryBoards :
                 elements.Min(element => element.X),
                 elements.Min(element => element.Y),
                 elements.Max(element => element.X + element.Width),
-                elements.Max(element => element.Y + element.Height)));
+                elements.Max(element => element.Y + element.Height),
+                items.Count == 0 ? null : items.Max(element => element.X + element.Width)));
     }
 
     public Task<IReadOnlyList<Element>> FindElements(Guid boardId, IReadOnlyCollection<Guid> elementIds, CancellationToken cancellationToken) =>
         Task.FromResult<IReadOnlyList<Element>>(Elements.Where(element => element.BoardId == boardId && elementIds.Contains(element.Id)).ToList());
 
-    public Task<InsertedContent> Insert(Guid boardId, IReadOnlyList<Element> elements, IReadOnlyList<Connection> connections, ActorRef by, DateTimeOffset at, CancellationToken cancellationToken)
+    public Task<InsertedContent> Insert(Guid boardId, IReadOnlyList<Element> elements, IReadOnlyList<Connection> connections, IReadOnlyList<Element> grown, ActorRef by, DateTimeOffset at, CancellationToken cancellationToken)
     {
+        foreach (var resized in grown)
+        {
+            var index = Elements.FindIndex(element => element.Id == resized.Id && element.BoardId == boardId);
+            if (index >= 0)
+            {
+                Elements[index] = Elements[index] with
+                {
+                    X = resized.X,
+                    Y = resized.Y,
+                    Width = resized.Width,
+                    Height = resized.Height,
+                    Version = Elements[index].Version + 1,
+                    UpdatedAt = at,
+                    UpdatedBy = by,
+                };
+            }
+        }
+
         var added = 0;
         foreach (var element in elements.Where(element => Elements.All(existing => existing.Id != element.Id)))
         {
@@ -171,8 +191,8 @@ public sealed class InMemoryBoards :
             addedConnections++;
         }
 
-        var revision = added + addedConnections > 0 ? Bump(boardId, by, at, added) : Revision(boardId);
-        var ids = elements.Select(element => element.Id).ToHashSet();
+        var revision = added + addedConnections + grown.Count > 0 ? Bump(boardId, by, at, added) : Revision(boardId);
+        var ids = elements.Concat(grown).Select(element => element.Id).ToHashSet();
         var connectionIds = connections.Select(connection => connection.Id).ToHashSet();
         return Task.FromResult(new InsertedContent(
             revision,

@@ -121,16 +121,16 @@ namespace EventStorming.Specs.Features.Collaboration
 #line 9
     await testRunner.AndAsync("\"Food delivery\" has a \"big-picture\" board called \"Ordering\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
 #line hidden
-            global::Reqnroll.Table table34 = new global::Reqnroll.Table(new string[] {
+            global::Reqnroll.Table table36 = new global::Reqnroll.Table(new string[] {
                         "key",
                         "type",
                         "text"});
-            table34.AddRow(new string[] {
+            table36.AddRow(new string[] {
                         "placed",
                         "domain-event",
                         "Order Placed"});
 #line 10
-    await testRunner.AndAsync("the board \"Ordering\" has these elements:", ((string)(null)), table34, "And ");
+    await testRunner.AndAsync("the board \"Ordering\" has these elements:", ((string)(null)), table36, "And ");
 #line hidden
         }
         

@@ -11,6 +11,7 @@ using EventStorming.Email.Smtp;
 using EventStorming.Host.Configuration;
 using EventStorming.Host.Seed;
 using EventStorming.Identity;
+using EventStorming.Mcp;
 using EventStorming.Persistence.MongoDb;
 using EventStorming.Presence.InMemory;
 using EventStorming.PublicIntegration;
@@ -71,7 +72,12 @@ builder.Services
     .AddEventStormingBroadcasting()                                   // committed changes and presence, onto the board feed
     // Driving adapters
     .AddEventStormingRestApi(restApi)                                 // /api/app for the web app, /api/v1 for everyone else
-    .AddEventStormingRealtime();                                      // the board hub, and the relay from the board feed
+    .AddEventStormingRealtime()                                       // the board hub, and the relay from the board feed
+    .AddEventStormingMcp(new McpAdapterOptions                        // /mcp, the MCP server for agents
+    {
+        ActorFrom = Actors.From,
+        WebAppBaseUrl = webAppBaseUrl,
+    });
 
 builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.KebabCaseLower)));
@@ -227,6 +233,11 @@ app.MapEventStormingPublicApi()
 app.MapEventStormingBoardHub()
     .RequireAuthorization(HostAuth.UserPolicy)
     .RequireCors(HostAuth.WebAppCors);
+
+// Agents authenticate with a team API key, like the public API, and share its per-key rate limit.
+app.MapEventStormingMcp()
+    .RequireAuthorization(RestApiServiceExtensions.ApiKeyReadPolicy)
+    .RequireRateLimiting(RestApiServiceExtensions.PublicApiRateLimitPolicy);
 
 if (args.Contains("seed", StringComparer.OrdinalIgnoreCase))
 {

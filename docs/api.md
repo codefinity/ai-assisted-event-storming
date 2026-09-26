@@ -204,7 +204,7 @@ curl -s $API/boards/$BOARD/document -H "Authorization: Bearer $KEY" > ordering.b
 |---|---|---|---|---|
 | `GET` | `/boards/{boardId}/elements?type=&cursor=&limit=` | read | — | `200` page of elements, optionally of one type |
 | `POST` | `/boards/{boardId}/elements` | write | one element (below) | `201` the element |
-| `POST` | `/boards/{boardId}/elements/bulk` | write | `{ "elements": [...], "connections": [...] }` | `201` `{ elements, connections, keys }` |
+| `POST` | `/boards/{boardId}/elements/bulk` | write | `{ "elements": [...], "connections": [...] }` | `201` `{ elements, connections, keys, resized }` |
 | `GET` | `/boards/{boardId}/elements/{elementId}` | read | — | `200` the element |
 | `PATCH` | `/boards/{boardId}/elements/{elementId}` | write | the fields to change | `200` the element |
 | `DELETE` | `/boards/{boardId}/elements/{elementId}` | write | — | `204`; its arrows are deleted too |
@@ -243,11 +243,14 @@ curl -s -X POST $API/boards/$BOARD/elements/bulk \
 {
   "elements": [ { "id": "01a0da82-eb53-74a4-8df0-2254917115d6", "type": "command", "text": "Place Order", "position": { "x": 168, "y": 40 }, "…": "…" } ],
   "connections": [ { "id": "01a0da82-eb62-7d89-83ad-81410043382d", "from": "01a0da82-eb53-74a4-8df0-2254917115d6", "to": "01a0da82-eb53-7825-8d07-65a9ad16edd7", "label": null, "version": 1 } ],
-  "keys": { "customer": "01a0da82-eb53-78db-aa1a-0e07422d0ba3", "place": "01a0da82-eb53-74a4-8df0-2254917115d6", "placed": "01a0da82-eb53-7825-8d07-65a9ad16edd7" }
+  "keys": { "customer": "01a0da82-eb53-78db-aa1a-0e07422d0ba3", "place": "01a0da82-eb53-74a4-8df0-2254917115d6", "placed": "01a0da82-eb53-7825-8d07-65a9ad16edd7" },
+  "resized": []
 }
 ```
 
-Look elements up through `keys`: the `elements` array is not guaranteed to be in request order.
+Look elements up through `keys`. New elements continue after the last sticky on the board, inside the
+swimlanes and boundaries they name. A swimlane or boundary that is too small grows to hold them, and
+comes back in `resized`.
 
 **Updating** sends only what changes: `text`, `type`, `position`, `size`, `pivotal`, and `color`
 (`#RRGGBB`, or `""` to return to the type's color). Add `expectedVersion` to update only if nobody
@@ -301,7 +304,8 @@ Anything without a `position` is laid out for you:
 - a **pivotal** event gets extra space before it, so phases read apart;
 - elements you give a `position` keep it, and the rest are placed around them.
 
-When adding to an existing board, new content starts to the right of what is already there. The
+When adding to an existing board, new content continues after the last sticky already there, and
+existing swimlanes and boundaries grow to hold new elements that name them. The
 [LLM guide](llm-guide.md) walks through a complete example.
 
 On `PUT /boards/{id}/document` the whole content is replaced in one transaction; open boards reload

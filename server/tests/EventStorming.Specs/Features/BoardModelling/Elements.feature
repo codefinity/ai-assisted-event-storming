@@ -26,6 +26,41 @@ Feature: Elements on a board
       When Ana adds a "domain-event" saying "Payment Taken" to "Ordering"
       Then the element "added" is placed to the right of "placed"
 
+    Scenario: New elements continue after the last sticky, inside the swimlane they name
+      Given the board "Ordering" has these elements:
+        | key      | type         | text         | x   | y  |
+        | customer | swimlane     | Customer     | 0   | 0  |
+        | placed   | domain-event | Order Placed | 200 | 40 |
+      When Ana adds these elements to "Ordering":
+        | key  | type         | text          | swimlane |
+        | paid | domain-event | Payment Taken | customer |
+      Then the element "paid" is placed to the right of "placed"
+      And "customer" contains "paid"
+      And the element "customer" is at version 1
+
+    Scenario: A swimlane grows to hold new elements that no longer fit in it
+      Given the board "Ordering" has these elements:
+        | key      | type         | text         | x   | y  | width | height |
+        | customer | swimlane     | Customer     | 0   | 0  | 400   | 240    |
+        | placed   | domain-event | Order Placed | 200 | 40 |       |        |
+      When Ana adds these elements to "Ordering":
+        | key  | type         | text          | swimlane |
+        | paid | domain-event | Payment Taken | customer |
+      Then "customer" contains "paid"
+      And the element "customer" is at version 2
+      And the announcement carries the element "customer" at version 2
+
+    Scenario: A boundary grows to surround a new element that belongs to it
+      Given the board "Ordering" has these elements:
+        | key      | type         | text         | x   | y  | width | height |
+        | ordering | boundary     | Ordering     | 160 | 0  | 240   | 180    |
+        | placed   | domain-event | Order Placed | 200 | 40 |       |        |
+      When Ana adds these elements to "Ordering":
+        | key  | type         | text          | boundary |
+        | paid | domain-event | Payment Taken | ordering |
+      Then "ordering" contains "paid"
+      And "ordering" contains "placed"
+
     Scenario: An element can be stacked below one that is already there
       Given the board "Ordering" has these elements:
         | key    | type         | text         | x   | y  |

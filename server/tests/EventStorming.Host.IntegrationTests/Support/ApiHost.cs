@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.SignalR.Client;
+using ModelContextProtocol.Client;
 using Shouldly;
 using Testcontainers.MongoDb;
 using Xunit;
@@ -17,7 +18,7 @@ namespace EventStorming.Host.IntegrationTests.Support;
 
 public sealed class MongoServer : IAsyncLifetime
 {
-    private readonly MongoDbContainer container = new MongoDbBuilder().WithImage("mongo:8.0").WithReplicaSet().Build();
+    private readonly MongoDbContainer container = new MongoDbBuilder("mongo:8.0").WithReplicaSet().Build();
 
     public string ConnectionString => container.GetConnectionString();
 
@@ -84,6 +85,22 @@ public sealed class ApiHost(string connectionString, int publicApiPermitsPerMinu
         var client = CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", key);
         return client;
+    }
+
+    /// <summary>An agent connected to the MCP endpoint with an API key, through the official MCP client.</summary>
+    public async Task<McpClient> Agent(string key)
+    {
+        var http = CreateClient();
+        var transport = new HttpClientTransport(
+            new HttpClientTransportOptions
+            {
+                Endpoint = new Uri(http.BaseAddress!, "mcp"),
+                TransportMode = HttpTransportMode.StreamableHttp,
+                AdditionalHeaders = new Dictionary<string, string> { ["Authorization"] = $"Bearer {key}" },
+            },
+            http,
+            ownsHttpClient: true);
+        return await McpClient.CreateAsync(transport);
     }
 }
 

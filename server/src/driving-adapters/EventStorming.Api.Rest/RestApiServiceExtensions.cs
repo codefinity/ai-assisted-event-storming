@@ -22,6 +22,9 @@ public static class RestApiServiceExtensions
     public const string AppApiGroup = "app";
     public const string PublicApiGroup = "v1";
     public const string PublicApiRateLimitPolicy = "public-api";
+
+    /// <summary>Authenticates a team API key and requires its 'read' scope. Other adapters (the MCP server) can require it too.</summary>
+    public const string ApiKeyReadPolicy = ApiKeyAuthenticationHandler.ReadPolicy;
     public const long MaxPublicBodyBytes = 2 * 1024 * 1024;
 
     public static IServiceCollection AddEventStormingRestApi(this IServiceCollection services, RestApiOptions options)
@@ -30,13 +33,13 @@ public static class RestApiServiceExtensions
         services.AddExceptionHandler<BadRequestExceptionHandler>();
 
         // The public API authenticates with API keys, the Public Integration context's credential.
-        services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationHandler.Scheme, null);
+        services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationHandler.SchemeName, null);
         services.AddAuthorizationBuilder()
             .AddPolicy(ApiKeyAuthenticationHandler.ReadPolicy, policy => policy
-                .AddAuthenticationSchemes(ApiKeyAuthenticationHandler.Scheme)
+                .AddAuthenticationSchemes(ApiKeyAuthenticationHandler.SchemeName)
                 .RequireClaim(Actors.ScopeClaim, ApiScopes.Read))
             .AddPolicy(ApiKeyAuthenticationHandler.WritePolicy, policy => policy
-                .AddAuthenticationSchemes(ApiKeyAuthenticationHandler.Scheme)
+                .AddAuthenticationSchemes(ApiKeyAuthenticationHandler.SchemeName)
                 .RequireClaim(Actors.ScopeClaim, ApiScopes.Write));
 
         services.AddRateLimiter(limiter =>

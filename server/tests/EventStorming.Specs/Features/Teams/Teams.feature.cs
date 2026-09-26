@@ -299,17 +299,17 @@ namespace EventStorming.Specs.Features.Teams
 #line 34
       await testRunner.WhenAsync("Ana lists their teams", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-                global::Reqnroll.Table table37 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table39 = new global::Reqnroll.Table(new string[] {
                             "team",
                             "role"});
-                table37.AddRow(new string[] {
+                table39.AddRow(new string[] {
                             "Checkout squad",
                             "owner"});
-                table37.AddRow(new string[] {
+                table39.AddRow(new string[] {
                             "Payments",
                             "viewer"});
 #line 35
-      await testRunner.ThenAsync("the teams listed are:", ((string)(null)), table37, "Then ");
+      await testRunner.ThenAsync("the teams listed are:", ((string)(null)), table39, "Then ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();
@@ -351,17 +351,17 @@ namespace EventStorming.Specs.Features.Teams
 #line 46
       await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
-                global::Reqnroll.Table table38 = new global::Reqnroll.Table(new string[] {
+                global::Reqnroll.Table table40 = new global::Reqnroll.Table(new string[] {
                             "name",
                             "role"});
-                table38.AddRow(new string[] {
+                table40.AddRow(new string[] {
                             "Ana",
                             "owner"});
-                table38.AddRow(new string[] {
+                table40.AddRow(new string[] {
                             "Bo",
                             "editor"});
 #line 47
-      await testRunner.AndAsync("the team\'s members are:", ((string)(null)), table38, "And ");
+      await testRunner.AndAsync("the team\'s members are:", ((string)(null)), table40, "And ");
 #line hidden
             }
             await this.ScenarioCleanupAsync();

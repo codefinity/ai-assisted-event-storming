@@ -1,6 +1,7 @@
 # Guide for LLM agents
 
-You can read and build EventStorming boards through the public API. This guide gives you the
+You can read and build EventStorming boards through the public API, or through the MCP server
+(see [`mcp.md`](mcp.md)), whose tools take the same element format. This guide gives you the
 vocabulary, the one JSON format you need (the **Board Document**), a complete worked example, and the
 mistakes to avoid. The full reference is [`api.md`](api.md); the JSON Schema is at
 `GET /api/v1/schemas/board-document.json`.
@@ -94,7 +95,7 @@ You describe the story; the server draws it.
 - **Boundaries** are also listed once; each is drawn as a box around the elements that name it.
 - **Pivotal events** get extra space before them, so the phases read apart.
 - Anything with an explicit `position` stays exactly there.
-- Adding to an existing board with bulk starts to the right of what is already there.
+- Adding to an existing board continues after the last sticky already there. New elements may name existing swimlanes and boundaries by id; those grow to hold them.
 
 ## Worked example
 
@@ -167,7 +168,8 @@ will change individual elements later.
 ### Adding to it later
 
 To continue the story on the same board, send only the new elements to the bulk endpoint. New
-elements start to the right of the existing content; refer to existing elements by id:
+elements continue after the last sticky already there; refer to existing elements, lanes and
+boundaries by id:
 
 ```http
 POST /api/v1/boards/{boardId}/elements/bulk

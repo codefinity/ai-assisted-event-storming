@@ -32,7 +32,9 @@ public sealed record AddElementsCommand(
     IReadOnlyList<NewConnection>? Connections = null,
     string? OperationId = null);
 
-public sealed record AddedElements(BoardChangeSet Changes, IReadOnlyDictionary<string, Guid> KeyedIds);
+/// <param name="Created">The new elements, in the order they were requested.</param>
+/// <param name="Grown">Swimlanes and boundaries already on the board that were resized to hold them.</param>
+public sealed record AddedElements(BoardChangeSet Changes, IReadOnlyDictionary<string, Guid> KeyedIds, IReadOnlyList<Element> Created, IReadOnlyList<Element> Grown);
 
 public sealed class AddElementsResult : IUseCaseResult
 {
@@ -61,13 +63,15 @@ public interface IAddElementsCommandHandler
 }
 
 /// <summary>How much is already on a board, and where. The bounds are null for an empty board.</summary>
-public sealed record BoardContentStats(int ElementCount, int ConnectionCount, double? Left, double? Top, double? Right, double? Bottom);
+/// <param name="ItemRight">The right edge of the rightmost element that is not a structure: where the timeline continues. Null when there is none.</param>
+public sealed record BoardContentStats(int ElementCount, int ConnectionCount, double? Left, double? Top, double? Right, double? Bottom, double? ItemRight = null);
 
 public sealed record InsertedContent(long Revision, IReadOnlyList<Element> Elements, IReadOnlyList<Connection> Connections);
 
 public interface IAddElementsStore
 {
-    Task<BoardContentStats> Stats(Guid boardId, CancellationToken cancellationToken);
+    /// <param name="structureTypes">The type ids of structures (swimlanes, boundaries), which do not count towards <see cref="BoardContentStats.ItemRight"/>.</param>
+    Task<BoardContentStats> Stats(Guid boardId, IReadOnlyCollection<string> structureTypes, CancellationToken cancellationToken);
 
     Task<IReadOnlyList<Element>> FindElements(Guid boardId, IReadOnlyCollection<Guid> elementIds, CancellationToken cancellationToken);
 
@@ -76,5 +80,6 @@ public interface IAddElementsStore
     /// each of them. An id that already exists on the board is left untouched and returned as it is, so
     /// replaying the same request is harmless.
     /// </summary>
-    Task<InsertedContent> Insert(Guid boardId, IReadOnlyList<Element> elements, IReadOnlyList<Connection> connections, ActorRef by, DateTimeOffset at, CancellationToken cancellationToken);
+    /// <param name="grown">Existing elements to resize in the same transaction (the swimlanes and boundaries the new elements sit in); their versions go up and they are returned with the rest.</param>
+    Task<InsertedContent> Insert(Guid boardId, IReadOnlyList<Element> elements, IReadOnlyList<Connection> connections, IReadOnlyList<Element> grown, ActorRef by, DateTimeOffset at, CancellationToken cancellationToken);
 }

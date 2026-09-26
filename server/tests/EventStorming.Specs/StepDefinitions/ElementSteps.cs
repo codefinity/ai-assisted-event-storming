@@ -31,7 +31,7 @@ public sealed class ElementSteps(World world)
             world.Keys[row["key"]] = id;
             world.Boards.Elements.Add(new Element(
                 id, boardId, type.Id, row["text"],
-                Number(row, "x", 0), Number(row, "y", 0), type.DefaultSize.Width, type.DefaultSize.Height,
+                Number(row, "x", 0), Number(row, "y", 0), Number(row, "width", type.DefaultSize.Width), Number(row, "height", type.DefaultSize.Height),
                 false, null, 1, world.Clock.UtcNow, by, world.Clock.UtcNow, by));
         }
 
@@ -62,6 +62,7 @@ public sealed class ElementSteps(World world)
             Key: Value(row, "key"),
             Position: Value(row, "x") is null ? null : new Position(Number(row, "x", 0), Number(row, "y", 0)),
             Swimlane: Reference(Value(row, "swimlane")),
+            Boundary: Reference(Value(row, "boundary")),
             Anchor: Reference(Value(row, "anchor")),
             Pivotal: Value(row, "pivotal") == "yes")).ToList());
 
@@ -139,6 +140,17 @@ public sealed class ElementSteps(World world)
     [Then("the element {string} is placed to the right of {string}")]
     public void ThenIsToTheRightOf(string key, string other) =>
         world.ElementNamed(key).X.ShouldBeGreaterThanOrEqualTo(world.ElementNamed(other).X + world.ElementNamed(other).Width);
+
+    [Then("{string} contains {string}")]
+    public void ThenContains(string outer, string inner)
+    {
+        var around = world.ElementNamed(outer);
+        var element = world.ElementNamed(inner);
+        element.X.ShouldBeGreaterThanOrEqualTo(around.X);
+        element.Y.ShouldBeGreaterThanOrEqualTo(around.Y);
+        (element.X + element.Width).ShouldBeLessThanOrEqualTo(around.X + around.Width);
+        (element.Y + element.Height).ShouldBeLessThanOrEqualTo(around.Y + around.Height);
+    }
 
     [Then("the element {string} is placed below {string}")]
     public void ThenIsBelow(string key, string other)
