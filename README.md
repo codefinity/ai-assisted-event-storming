@@ -25,6 +25,7 @@ changes appear live.
 
 - [Quick start](#quick-start)
 - [Developing locally](#developing-locally)
+- [Using the MCP server](#using-the-mcp-server)
 - [Tests](#tests)
 - [Architecture](#architecture)
 - [Folder structure](#folder-structure)
@@ -77,6 +78,259 @@ npm run dev
 Seed the local database with `./scripts/seed.sh` (or `./scripts/seed.ps1` on Windows). The scripts use
 the Docker stack if it is running, and the local API otherwise. MongoDB is published on host port
 **27018**, since a local installation often takes 27017.
+
+## Using the MCP server
+
+The API includes a [Model Context Protocol](https://modelcontextprotocol.io/) server. With it, AI
+assistants and agents can draw and edit EventStorming boards: Claude Code, Claude Desktop, VS Code
+(Copilot), Cursor, or your own code. You ask in plain language ("run a Big Picture EventStorming of
+online food ordering"), and the agent draws a real board in your team.
+
+What the agent draws is validated and laid out automatically. It appears live for everyone who has
+the board open, and people can keep editing it in the web app.
+
+| | |
+|---|---|
+| Endpoint | `http://localhost:5080/mcp` (Streamable HTTP, stateless) |
+| Authentication | A team API key: `Authorization: Bearer es_…` |
+| What it can reach | The boards of the key's team, nothing else |
+| Permissions | `read` scope to read; `write` scope ("Can change boards") to draw |
+| Rate limit | 300 requests per minute per key, shared with `/api/v1` |
+
+### 1. Start the stack and get an API key
+
+1. Start everything, and optionally seed the demo data:
+
+   ```sh
+   docker compose up --build
+   docker compose run --rm api seed
+   ```
+
+2. Open http://localhost:3000 and sign in. The demo account is `demo@eventstorming.local` / `eventstorming`.
+3. Open the team (for example "Demo team") and choose **Members & API keys**. Only the team's Owners see the API keys section.
+4. Under **API keys**:
+   - type a name the agent's changes will be attributed to, e.g. `Claude`;
+   - tick **Can change boards** (without it the agent can read but not draw);
+   - optionally pick an expiry date;
+   - choose **Create key**.
+5. Copy the key (`es_…`) straight away: it is shown once, and only a hash is stored.
+
+To cut an agent off later, press **Revoke** next to its key. It stops working immediately.
+
+### 2. Connect your client
+
+Replace `es_…` with your key. If the API runs somewhere else, replace `http://localhost:5080` too.
+
+**Claude Code**
+
+```sh
+claude mcp add --transport http eventstorming http://localhost:5080/mcp \
+  --header "Authorization: Bearer es_…"
+```
+
+- Add `--scope user` to use it in every project.
+- `claude mcp list` or `/mcp` inside Claude Code shows whether it connected.
+- To share the setup with a team through a project's `.mcp.json`, don't commit the key. Reference an environment variable instead: `"Authorization": "Bearer ${EVENTSTORMING_API_KEY}"`.
+
+**VS Code** (Copilot agent mode). Create `.vscode/mcp.json`; VS Code asks for the key once and keeps it out of the file:
+
+```json
+{
+  "inputs": [
+    { "type": "promptString", "id": "eventstorming-key", "description": "EventStorming API key", "password": true }
+  ],
+  "servers": {
+    "eventstorming": {
+      "type": "http",
+      "url": "http://localhost:5080/mcp",
+      "headers": { "Authorization": "Bearer ${input:eventstorming-key}" }
+    }
+  }
+}
+```
+
+**Cursor**, in `~/.cursor/mcp.json` (or `.cursor/mcp.json` in a project):
+
+```json
+{
+  "mcpServers": {
+    "eventstorming": {
+      "url": "http://localhost:5080/mcp",
+      "headers": { "Authorization": "Bearer es_…" }
+    }
+  }
+}
+```
+
+**Claude Desktop** and other clients that only start local (stdio) servers need a bridge to a remote
+server, such as [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) (needs Node.js). Add this to
+`claude_desktop_config.json` and restart the app. The file lives at
+`%APPDATA%\Claude\claude_desktop_config.json` on Windows, or
+`~/Library/Application Support/Claude/claude_desktop_config.json` on macOS:
+
+```json
+{
+  "mcpServers": {
+    "eventstorming": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "http://localhost:5080/mcp", "--header", "Authorization:${EVENTSTORMING_AUTH}"],
+      "env": { "EVENTSTORMING_AUTH": "Bearer es_…" }
+    }
+  }
+}
+```
+
+**MCP Inspector**, to try the tools by hand: run `npx @modelcontextprotocol/inspector`. Then choose
+the Streamable HTTP transport, enter the endpoint URL, and add an `Authorization` header with
+`Bearer es_…`.
+
+**Any other client** works if it speaks Streamable HTTP and can send a custom header. From your own
+.NET code, with the official `ModelContextProtocol` package (the integration tests connect this way):
+
+```csharp
+await using var client = await McpClient.CreateAsync(new HttpClientTransport(new HttpClientTransportOptions
+{
+    Endpoint = new Uri("http://localhost:5080/mcp"),
+    TransportMode = HttpTransportMode.StreamableHttp,
+    AdditionalHeaders = new Dictionary<string, string> { ["Authorization"] = "Bearer es_…" },
+}));
+
+var result = await client.CallToolAsync("list_boards", new Dictionary<string, object?>());
+```
+
+### 3. Check that it works
+
+Without any client, curl can list the tools. The server answers as a server-sent event (`data: {…}`):
+
+```sh
+curl -s http://localhost:5080/mcp \
+  -H "Authorization: Bearer es_…" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -H "MCP-Protocol-Version: 2025-11-25" \
+  -d '{ "jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {} }'
+```
+
+You should see the 11 tools below. A `401` means the key is missing, mistyped or revoked.
+
+### 4. Draw a board
+
+Ask the agent in your own words. It calls the tools itself. For example:
+
+> Use the eventstorming tools to run a Big Picture EventStorming of online food ordering: customers,
+> restaurants and couriers. Mark the pivotal events, add hot spots for anything unclear, and give me
+> the link to the board.
+
+A well-behaved agent then does the following:
+
+1. It calls `list_element_types` to learn the notation: which types exist, what each means, and how to write it.
+2. It calls `create_board` once, with the whole story as elements in timeline order.
+3. It answers with the link, e.g. `http://localhost:3000/boards/01a0…`. Open it: the board is laid out with swimlanes, pivotal-event dividers, hot spots under the events they question, and arrows.
+
+Then keep the conversation going; the agent edits the same board:
+
+> Add what happens when a customer asks for a refund, in the Customer and Support lanes.
+
+> Rename "Order Placd" to "Order Placed" and mark "Payment Taken" as pivotal.
+
+> Move the hot spots about delivery times next to "Order Delivered".
+
+If the board is open in your browser while the agent works, you see each change appear. A notice
+names the key: "“Claude” (an API key) is changing this board".
+
+**Ready-made prompts.** The server offers two prompts that walk the agent through a proper session:
+
+| Prompt | Arguments | What it does |
+|---|---|---|
+| `big_picture` | `domain`, optional `focus` | Explores a whole domain as a Big Picture board. |
+| `process_modelling` | `process`, optional `boardId` | Models one process with the Actor → Command → Event → Policy grammar, on a new board or continuing an existing one. |
+
+In Claude Code they appear as slash commands, e.g. `/mcp__eventstorming__big_picture`. Other clients
+list them in their prompt or command menu.
+
+**Resources.** Clients that support MCP resources can attach these:
+
+| Resource | Content |
+|---|---|
+| `eventstorming://guide` | The modelling guide: notation, format, a worked example, common mistakes |
+| `eventstorming://element-types` | The notation as JSON |
+| `eventstorming://boards/{boardId}` | One board's elements and arrows |
+
+### Tools
+
+| Tool | Arguments | What it does |
+|---|---|---|
+| `list_element_types` | — | The notation: every element type (meaning, when to use it, how to write it, whether it can be pivotal) and each level's palette. |
+| `list_boards` | `includeArchived?`, `cursor?` | The team's boards with ids, levels, sizes and links. |
+| `get_board` | `boardId` | Every element in timeline order (id, type, text, position, size, pivotal, version, and the ids of its swimlane and boundary) and every arrow. |
+| `create_board` | `name`, `level`, `elements?`, `connections?` | Draws a new board in one call and lays it out. |
+| `add_to_board` | `boardId`, `elements`, `connections?` | Continues a board after its last sticky; up to 500 elements per call. |
+| `update_element` | `boardId`, `elementId`, `text?`, `type?`, `position?`, `size?`, `pivotal?`, `color?`, `expectedVersion?` | Changes one element; only the fields given change. |
+| `move_elements` | `boardId`, `moves` (`elementId`, `x`, `y`) | Moves elements in one change. |
+| `connect_elements` | `boardId`, `from`, `to`, `label?` | Draws an arrow between two elements on the board. |
+| `delete_elements` | `boardId`, `elementIds` | Deletes elements and the arrows touching them. |
+| `delete_connections` | `boardId`, `connectionIds` | Deletes arrows. |
+| `replace_board_content` | `boardId`, `elements`, `connections?`, `name?` | Redraws a whole board from scratch. |
+
+`level` is `big-picture`, `process-modelling` or `software-design`. The first three tools only read;
+clients may ask you to confirm the delete and replace tools, which are marked destructive.
+
+Elements use the same shape as the [Board Document](docs/llm-guide.md). An agent's `create_board` call
+looks like this:
+
+```json
+{
+  "name": "Online food ordering",
+  "level": "big-picture",
+  "elements": [
+    { "key": "customer", "type": "swimlane", "text": "Customer" },
+    { "key": "placed", "type": "domain-event", "text": "Order Placed", "swimlane": "customer", "pivotal": true },
+    { "key": "late", "type": "hot-spot", "text": "What if the kitchen is busy?", "anchor": "placed" },
+    { "key": "paid", "type": "domain-event", "text": "Payment Taken", "swimlane": "customer" }
+  ],
+  "connections": [ { "from": "placed", "to": "paid" } ]
+}
+```
+
+The layout follows a few rules:
+- **Array order is the timeline:** elements are placed left to right in the order listed, one column each, across all swimlanes.
+- **`anchor`** stacks an element below another (e.g. a hot spot under its event).
+- **`swimlane`** and **`boundary`** place an element in a lane or a boundary box. They name a `key` in the same call, or the id of an element already on the board.
+- **Positions are optional:** leave them out and the server lays everything out.
+- **`add_to_board`** continues after the last sticky. A lane or boundary that is too small grows to hold the new elements, and the result lists it under `resized`.
+- **Results** map every `key` to the element id it was given, for later edits.
+
+### When something goes wrong
+
+If a tool call breaks a rule, the board is not changed. The agent gets a normal tool result with
+`isError: true` that lists every problem with the field, a code and the fix:
+
+```
+create_board was refused with 2 problems. Nothing was changed. Fix them all and call create_board again:
+- elements[1].type: 'hotspot' is not an element type. [unknown-element-type] Fix: Use one of: domain-event, command, actor, …
+- elements[1].anchor: No element in this request has key 'plced', and no element on the board has that id. [unknown-reference] Fix: Did you mean 'placed'? …
+```
+
+Agents usually fix the call and retry on their own. Problems at the connection level show up as client errors instead:
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `401 Unauthorized`, or the client cannot connect | No key, a mistyped key, or a revoked or expired key | Check the `Authorization: Bearer es_…` header; create a new key if needed. |
+| Tools are refused with `[forbidden]` | The key has only the `read` scope | Create a key with **Can change boards** ticked. |
+| `[not-found]` for a board you can see in the web app | The board belongs to another team than the key | Use a key of the board's team. |
+| `[board-archived]` | The board is archived | Restore it on the team's dashboard. |
+| `429 Too Many Requests` | More than 300 requests in a minute with this key | Wait for the `Retry-After` seconds; prefer one `create_board` or `add_to_board` over many small calls. |
+| Links in results point to the wrong host | `WebApp__BaseUrl` (`WEB_ORIGIN` in Compose) is not where people open the web app | Set it to the web app's public address. |
+| Connection refused | The API is not running, or listens on another port | `docker compose ps`; the API is on `API_PORT` (default 5080). |
+
+### Running it for others
+
+- **Serve the API over HTTPS** when agents connect from other machines: the API key travels in a header.
+- **One key per agent or integration**, so each change is attributed to it, and each can be revoked on its own.
+- **The endpoint is not for browsers:** it has no CORS policy.
+- **The server is stateless.** It keeps no sessions and never calls back into the client (no sampling or elicitation), so any MCP client that can send a header works.
+
+The full reference is in [`docs/mcp.md`](docs/mcp.md); ADR [11](docs/adr/0011-mcp-server-as-a-driving-adapter.md) explains the design.
 
 ## Tests
 
