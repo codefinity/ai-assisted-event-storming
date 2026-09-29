@@ -92,6 +92,8 @@ public sealed class RecordingBroadcaster : IBoardChangeBroadcaster, IPresenceBro
 
     public List<Board> Details { get; } = [];
 
+    public List<Guid> Deleted { get; } = [];
+
     public List<(string What, Participant Participant)> Presence { get; } = [];
 
     public void ContentChanged(BoardChangeSet changes) => Changes.Add(changes);
@@ -99,6 +101,8 @@ public sealed class RecordingBroadcaster : IBoardChangeBroadcaster, IPresenceBro
     public void ContentReplaced(Guid boardId, long revision, ActorRef by) => Replaced.Add((boardId, revision));
 
     public void DetailsChanged(Board board) => Details.Add(board);
+
+    void IBoardChangeBroadcaster.Deleted(Guid boardId, ActorRef by) => Deleted.Add(boardId);
 
     public void Joined(Participant participant) => Presence.Add(("joined", participant));
 

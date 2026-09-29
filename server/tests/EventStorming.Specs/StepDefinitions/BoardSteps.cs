@@ -1,6 +1,7 @@
 using EventStorming.BoardModelling.Model;
 using EventStorming.BoardModelling.Slices.ArchiveBoard;
 using EventStorming.BoardModelling.Slices.CreateBoard;
+using EventStorming.BoardModelling.Slices.DeleteBoard;
 using EventStorming.BoardModelling.Slices.DuplicateBoard;
 using EventStorming.BoardModelling.Slices.GetBoard;
 using EventStorming.BoardModelling.Slices.GetBoardSnapshot;
@@ -124,6 +125,30 @@ public sealed class BoardSteps(World world)
     [When("{word} restores the board {string}")]
     public async Task WhenRestoresTheBoard(string person, string name) =>
         world.LastResult = await world.RestoreBoard.Handle(new RestoreBoardCommand(world.Person(person), world.Board(name).Id), CancellationToken.None);
+
+    [When("{word} deletes the board {string}")]
+    public async Task WhenDeletesTheBoard(string person, string name) =>
+        world.LastResult = await world.DeleteBoard.Handle(new DeleteBoardCommand(world.Person(person), world.Board(name).Id), CancellationToken.None);
+
+    [When("{word} deletes a board that does not exist")]
+    public async Task WhenDeletesAMissingBoard(string person) =>
+        world.LastResult = await world.DeleteBoard.Handle(new DeleteBoardCommand(world.Person(person), Guid.CreateVersion7()), CancellationToken.None);
+
+    [Then("the board {string} and everything on it is gone")]
+    public void ThenTheBoardIsGone(string name)
+    {
+        var deleted = world.Broadcaster.Deleted.ShouldHaveSingleItem();
+        world.Boards.Boards.ShouldNotContain(board => board.Name == name);
+        world.Boards.Elements.ShouldNotContain(element => element.BoardId == deleted);
+        world.Boards.Connections.ShouldNotContain(connection => connection.BoardId == deleted);
+    }
+
+    [Then("the board {string} still has {int} elements")]
+    public void ThenTheBoardStillHasElements(string name, int count) =>
+        world.Boards.Elements.Count(element => element.BoardId == world.Board(name).Id).ShouldBe(count);
+
+    [Then("the deletion is announced to everyone on the board")]
+    public void ThenTheDeletionIsAnnounced() => world.Broadcaster.Deleted.ShouldNotBeEmpty();
 
     [Then("the board {string} is archived")]
     public void ThenTheBoardIsArchived(string name) => world.Board(name).ArchivedAt.ShouldNotBeNull();

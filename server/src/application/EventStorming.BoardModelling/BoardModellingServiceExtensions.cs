@@ -2,6 +2,7 @@ using EventStorming.BoardModelling.Slices.AddConnection;
 using EventStorming.BoardModelling.Slices.AddElements;
 using EventStorming.BoardModelling.Slices.ArchiveBoard;
 using EventStorming.BoardModelling.Slices.CreateBoard;
+using EventStorming.BoardModelling.Slices.DeleteBoard;
 using EventStorming.BoardModelling.Slices.DeleteConnections;
 using EventStorming.BoardModelling.Slices.DeleteElements;
 using EventStorming.BoardModelling.Slices.DuplicateBoard;
@@ -40,6 +41,7 @@ public static class BoardModellingServiceExtensions
         services.AddSingleton<IValidator<DuplicateBoardCommand>, DuplicateBoardCommandValidator>();
         services.AddScoped<IArchiveBoardCommandHandler, ArchiveBoardCommandHandler>();
         services.AddScoped<IRestoreBoardCommandHandler, RestoreBoardCommandHandler>();
+        services.AddScoped<IDeleteBoardCommandHandler, DeleteBoardCommandHandler>();
 
         // Content
         services.AddScoped<IAddElementsCommandHandler, AddElementsCommandHandler>();

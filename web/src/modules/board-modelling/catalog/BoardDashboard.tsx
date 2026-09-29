@@ -15,6 +15,7 @@ import {
   boardsApi,
   useArchiveBoardMutation,
   useCreateBoardMutation,
+  useDeleteBoardMutation,
   useDuplicateBoardMutation,
   useGetNotationQuery,
   useImportBoardMutation,
@@ -106,7 +107,56 @@ function RenameDialog({ board, onClose }: { board: BoardSummary; onClose: () => 
   );
 }
 
-function BoardCard({ board, canEdit, levels, onRename, onProblem }: { board: BoardSummary; canEdit: boolean; levels?: ReadonlyArray<{ id: string; name: string }>; onRename: () => void; onProblem: (problem?: Problem) => void }) {
+function DeleteDialog({ board, onClose }: { board: BoardSummary; onClose: () => void }) {
+  const [deleteBoard, { isLoading, error }] = useDeleteBoardMutation();
+  const [typed, setTyped] = useState('');
+  const problem = toProblem(error);
+  const confirmed = typed.trim() === board.name.trim();
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!confirmed) return;
+    const deleted = await deleteBoard(board).unwrap().then(() => true, () => false);
+    if (deleted) onClose();
+  };
+
+  return (
+    <Dialog open title="Delete board?" onClose={onClose}>
+      <form className="stack" onSubmit={submit} noValidate>
+        <p>
+          “{board.name}” and everything on it — {board.elementCount} {board.elementCount === 1 ? 'element' : 'elements'} and all of their connections — is deleted for good. Anyone with the board
+          open is closed out of it. This cannot be undone: export it first if you want to keep a copy, or archive it instead.
+        </p>
+        <FormProblem problem={problem} />
+        <TextField label={`Type “${board.name}” to confirm`} name="confirm" value={typed} onChange={(event) => setTyped(event.target.value)} autoComplete="off" autoFocus />
+        <div className="row row-end">
+          <button type="button" className="btn" onClick={onClose}>
+            Cancel
+          </button>
+          <button type="submit" className="btn btn-primary btn-danger-solid" disabled={isLoading || !confirmed}>
+            Delete board
+          </button>
+        </div>
+      </form>
+    </Dialog>
+  );
+}
+
+function BoardCard({
+  board,
+  canEdit,
+  levels,
+  onRename,
+  onDelete,
+  onProblem,
+}: {
+  board: BoardSummary;
+  canEdit: boolean;
+  levels?: ReadonlyArray<{ id: string; name: string }>;
+  onRename: () => void;
+  onDelete: () => void;
+  onProblem: (problem?: Problem) => void;
+}) {
   const [duplicateBoard] = useDuplicateBoardMutation();
   const [archiveBoard] = useArchiveBoardMutation();
   const [restoreBoard] = useRestoreBoardMutation();
@@ -157,6 +207,7 @@ function BoardCard({ board, canEdit, levels, onRename, onProblem }: { board: Boa
             archived
               ? { label: 'Restore', onSelect: () => void run(restoreBoard(board).unwrap()), disabled: !canEdit }
               : { label: 'Archive', onSelect: () => void run(archiveBoard(board).unwrap()), disabled: !canEdit, danger: true },
+            { label: 'Delete…', onSelect: onDelete, disabled: !canEdit, danger: true },
           ]}
         />
       </div>
@@ -172,6 +223,7 @@ export function BoardDashboard({ teamId }: { teamId: string }) {
   const [importBoard, importing] = useImportBoardMutation();
   const [creating, setCreating] = useState(false);
   const [renaming, setRenaming] = useState<BoardSummary | null>(null);
+  const [deleting, setDeleting] = useState<BoardSummary | null>(null);
   const [problem, setProblem] = useState<Problem | undefined>(undefined);
   const fileInput = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -244,7 +296,7 @@ export function BoardDashboard({ teamId }: { teamId: string }) {
       ) : (
         <ul className="card-grid" aria-label="Boards">
           {boards.map((board) => (
-            <BoardCard key={board.id} board={board} canEdit={canEdit} levels={notation?.levels} onRename={() => setRenaming(board)} onProblem={setProblem} />
+            <BoardCard key={board.id} board={board} canEdit={canEdit} levels={notation?.levels} onRename={() => setRenaming(board)} onDelete={() => setDeleting(board)} onProblem={setProblem} />
           ))}
         </ul>
       )}
@@ -257,6 +309,7 @@ export function BoardDashboard({ teamId }: { teamId: string }) {
       )}
       <NewBoardDialog teamId={teamId} open={creating} onClose={() => setCreating(false)} />
       {renaming && <RenameDialog board={renaming} onClose={() => setRenaming(null)} />}
+      {deleting && <DeleteDialog board={deleting} onClose={() => setDeleting(null)} />}
     </section>
   );
 }

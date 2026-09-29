@@ -4,6 +4,7 @@ using EventStorming.BoardModelling.Slices.AddConnection;
 using EventStorming.BoardModelling.Slices.AddElements;
 using EventStorming.BoardModelling.Slices.ArchiveBoard;
 using EventStorming.BoardModelling.Slices.CreateBoard;
+using EventStorming.BoardModelling.Slices.DeleteBoard;
 using EventStorming.BoardModelling.Slices.DeleteConnections;
 using EventStorming.BoardModelling.Slices.DeleteElements;
 using EventStorming.BoardModelling.Slices.DuplicateBoard;
@@ -38,6 +39,7 @@ public sealed class InMemoryBoards :
     IDuplicateBoardStore,
     IArchiveBoardStore,
     IRestoreBoardStore,
+    IDeleteBoardStore,
     IImportBoardDocumentStore,
     IAddElementsStore,
     IUpdateElementStore,
@@ -111,6 +113,13 @@ public sealed class InMemoryBoards :
 
     public Task<Board?> Restore(Guid boardId, ActorRef by, DateTimeOffset at, CancellationToken cancellationToken) =>
         Task.FromResult(Replace(boardId, board => board.ArchivedAt is null ? board : board with { ArchivedAt = null, UpdatedAt = at, UpdatedBy = by }));
+
+    public Task<bool> Delete(Guid boardId, CancellationToken cancellationToken)
+    {
+        Elements.RemoveAll(element => element.BoardId == boardId);
+        Connections.RemoveAll(connection => connection.BoardId == boardId);
+        return Task.FromResult(Boards.RemoveAll(board => board.Id == boardId) > 0);
+    }
 
     public Task InsertNew(Board board, IReadOnlyList<Element> elements, IReadOnlyList<Connection> connections, CancellationToken cancellationToken)
     {

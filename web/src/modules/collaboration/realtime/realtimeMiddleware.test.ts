@@ -105,6 +105,18 @@ describe('realtime middleware', () => {
     expect(store.getState().board.elements.ids).toEqual(['n1', 'n2']);
   });
 
+  it('closes the board and says who deleted it', async () => {
+    const { store, hub } = await openBoard();
+    hub.emit('boardDeleted', { boardId, actor: ana });
+    await settle();
+
+    const state = store.getState();
+    expect(state.board.phase).toBe('failed');
+    expect(state.board.failure).toEqual({ code: 'board-deleted', message: `${ana.name} deleted this board and everything on it.` });
+    expect(state.realtime.status).toBe('offline');
+    expect(state.presence.participants.ids).toEqual([]);
+  });
+
   it('shares the cursor, the editing focus and drag previews', async () => {
     const { store, hub } = await openBoard();
     store.dispatch(pointerMoved({ x: 10, y: 20 }));

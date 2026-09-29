@@ -54,7 +54,7 @@ A level decides what the palette offers first. Every type can still be placed on
 | **Session** | Identity | A signed-in period: a 15-minute access token plus a rotating refresh token in an HttpOnly cookie. |
 | **Team**, **Member**, **Role** | Teams | Who may see and change which boards. Roles: **Owner** (everything, including members and API keys), **Editor** (boards), **Viewer** (read only). |
 | **Invitation** | Teams | A link anyone can use once, or an email invitation only that address can accept. Expires after 7 days. |
-| **Board** | Board Modelling | A shared canvas at one level, owned by a team. It can be **archived** (read-only, hidden) and **restored**. |
+| **Board** | Board Modelling | A shared canvas at one level, owned by a team. It can be **archived** (read-only, hidden) and **restored**, or **deleted** for good with all of its content (web app only). |
 | **Element** | Board Modelling | Anything on a board: stickies and structures. The UI says "sticky" for sticky-category elements. |
 | **Element Type**, **Registry**, **Palette**, **Legend** | Board Modelling | The notation, defined as data. |
 | **Revision** | Board Modelling | A per-board counter, raised by every change. Clients use it to put changes in order and to resync. |

@@ -10,6 +10,7 @@ public static class ClientMethods
     public const string BoardChanged = "boardChanged";
     public const string BoardReplaced = "boardReplaced";
     public const string BoardDetailsChanged = "boardDetailsChanged";
+    public const string BoardDeleted = "boardDeleted";
     public const string ParticipantJoined = "participantJoined";
     public const string ParticipantLeft = "participantLeft";
     public const string CursorMoved = "cursorMoved";
@@ -52,6 +53,9 @@ public sealed record BoardChangedMessage(
 public sealed record BoardReplacedMessage(Guid BoardId, long Revision, ActorWire Actor);
 
 public sealed record BoardDetailsMessage(Guid BoardId, string Name, DateTimeOffset? ArchivedAt);
+
+/// <summary>The board and everything on it is gone: close it.</summary>
+public sealed record BoardDeletedMessage(Guid BoardId, ActorWire Actor);
 
 public sealed record ParticipantWire(string ConnectionId, Guid AccountId, string DisplayName, string Color, Guid? EditingElementId);
 

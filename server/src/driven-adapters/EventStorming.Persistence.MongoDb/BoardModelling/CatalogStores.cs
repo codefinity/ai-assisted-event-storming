@@ -1,6 +1,7 @@
 using EventStorming.BoardModelling.Model;
 using EventStorming.BoardModelling.Slices.ArchiveBoard;
 using EventStorming.BoardModelling.Slices.CreateBoard;
+using EventStorming.BoardModelling.Slices.DeleteBoard;
 using EventStorming.BoardModelling.Slices.DuplicateBoard;
 using EventStorming.BoardModelling.Slices.ExportBoardDocument;
 using EventStorming.BoardModelling.Slices.GetBoard;
@@ -181,6 +182,24 @@ internal sealed class ArchiveBoardStore(MongoDatabase mongo) : IArchiveBoardStor
 
         return changed?.ToModel() ?? await BoardCollections.FindBoard(mongo, boardId, cancellationToken);
     }
+}
+
+internal sealed class DeleteBoardStore(MongoDatabase mongo) : IDeleteBoardStore
+{
+    public Task<bool> Delete(Guid boardId, CancellationToken cancellationToken) =>
+        mongo.InTransaction(async (session, token) =>
+        {
+            // The board goes first: a content change racing this one conflicts on it and cannot leave orphans behind.
+            var deleted = await BoardCollections.BoardsIn(mongo).DeleteOneAsync(session, board => board.Id == boardId, cancellationToken: token);
+            if (deleted.DeletedCount == 0)
+            {
+                return false;
+            }
+
+            await BoardCollections.ElementsIn(mongo).DeleteManyAsync(session, element => element.BoardId == boardId, cancellationToken: token);
+            await BoardCollections.ConnectionsIn(mongo).DeleteManyAsync(session, connection => connection.BoardId == boardId, cancellationToken: token);
+            return true;
+        }, cancellationToken);
 }
 
 internal sealed class ImportBoardDocumentStore(MongoDatabase mongo) : IImportBoardDocumentStore

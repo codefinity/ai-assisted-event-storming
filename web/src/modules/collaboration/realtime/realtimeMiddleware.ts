@@ -14,7 +14,7 @@ import {
 } from '@/modules/board-modelling/board/boardSlice';
 import type { PendingOp } from '@/modules/board-modelling/board/ops';
 import { dragEnded, dragMoved, editEnded, editStarted, pointerMoved, type EditorState } from '@/modules/board-modelling/editor/editorSlice';
-import type { BoardChangeSet, BoardDetails, BoardReplaced, BoardSnapshot } from '@/modules/board-modelling/model';
+import type { BoardChangeSet, BoardDeleted, BoardDetails, BoardReplaced, BoardSnapshot } from '@/modules/board-modelling/model';
 import { toProblem, type HubFailure } from '@/shared/api/problems';
 import { noticeShown } from '@/shared/ui/noticesSlice';
 import {
@@ -109,6 +109,15 @@ export function createRealtimeMiddleware(deps: RealtimeDependencies): Middleware
       });
       connection.on('boardDetailsChanged', (message: BoardDetails) => {
         if (mine(message)) dispatch(boardDetailsChanged(message));
+      });
+      connection.on('boardDeleted', (message: BoardDeleted) => {
+        if (!mine(message)) return;
+        // Nothing more can be saved or loaded: stop retrying and show why the board went away.
+        generation++;
+        joined = false;
+        dispatch(snapshotFailed({ code: 'board-deleted', message: `${message.actor.name} deleted this board and everything on it.` }));
+        dispatch(presenceCleared());
+        dispatch(connectionStatusChanged('offline'));
       });
       connection.on('participantJoined', (message: { boardId: string; participant: Participant }) => {
         if (mine(message)) dispatch(participantJoined(message.participant));

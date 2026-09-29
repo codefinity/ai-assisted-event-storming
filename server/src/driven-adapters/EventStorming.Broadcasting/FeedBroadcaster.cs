@@ -32,6 +32,9 @@ internal sealed class FeedBroadcaster(IBoardFeed feed) : IBoardChangeBroadcaster
     public void DetailsChanged(Board board) =>
         feed.Publish(new FeedItem(board.Id, ClientMethods.BoardDetailsChanged, new BoardDetailsMessage(board.Id, board.Name, board.ArchivedAt)));
 
+    public void Deleted(Guid boardId, ActorRef by) =>
+        feed.Publish(new FeedItem(boardId, ClientMethods.BoardDeleted, new BoardDeletedMessage(boardId, Wire(by))));
+
     public void Joined(Participant participant) =>
         feed.Publish(new FeedItem(participant.BoardId, ClientMethods.ParticipantJoined,
             new ParticipantJoinedMessage(participant.BoardId, Wire(participant)), participant.ConnectionId));

@@ -37,4 +37,7 @@ public interface IBoardChangeBroadcaster
 
     /// <summary>The board's name or archived state changed.</summary>
     void DetailsChanged(Board board);
+
+    /// <summary>The board and all of its content are gone: open clients must close it.</summary>
+    void Deleted(Guid boardId, ActorRef by);
 }

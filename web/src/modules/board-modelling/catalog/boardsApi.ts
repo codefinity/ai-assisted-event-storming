@@ -88,6 +88,21 @@ export const boardsApi = api.injectEndpoints({
       query: (board) => ({ url: `/boards/${board.id}/restore`, method: 'POST' }),
       invalidatesTags: (_result, _error, board) => [{ type: 'Boards', id: board.teamId }],
     }),
+    deleteBoard: build.mutation<void, BoardSummary>({
+      query: (board) => ({ url: `/boards/${board.id}`, method: 'DELETE' }),
+      // A refetch merges into "load more" pages rather than replacing them, so drop the board from both lists directly.
+      async onQueryStarted(board, { dispatch, queryFulfilled }) {
+        if (!(await queryFulfilled.then(() => true, () => false))) return;
+        for (const includeArchived of [false, true]) {
+          dispatch(
+            boardsApi.util.updateQueryData('listBoards', { teamId: board.teamId, includeArchived }, (list) => {
+              list.items = list.items.filter((candidate) => candidate.id !== board.id);
+            }),
+          );
+        }
+      },
+      invalidatesTags: (_result, _error, board) => [{ type: 'Boards', id: board.teamId }],
+    }),
     // The editor loads snapshots itself (see the realtime middleware), never through a cache entry.
     getBoardSnapshot: build.query<BoardSnapshot, string>({
       query: (boardId) => `/boards/${boardId}`,
@@ -116,6 +131,7 @@ export const {
   useDuplicateBoardMutation,
   useArchiveBoardMutation,
   useRestoreBoardMutation,
+  useDeleteBoardMutation,
   useReplaceBoardDocumentMutation,
   useGetNotationQuery,
   useLazyExportBoardDocumentQuery,

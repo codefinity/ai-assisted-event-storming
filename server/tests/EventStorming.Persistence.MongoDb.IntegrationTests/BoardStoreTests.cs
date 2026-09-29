@@ -4,6 +4,7 @@ using EventStorming.BoardModelling.Slices.AddConnection;
 using EventStorming.BoardModelling.Slices.AddElements;
 using EventStorming.BoardModelling.Slices.ArchiveBoard;
 using EventStorming.BoardModelling.Slices.CreateBoard;
+using EventStorming.BoardModelling.Slices.DeleteBoard;
 using EventStorming.BoardModelling.Slices.DeleteElements;
 using EventStorming.BoardModelling.Slices.DuplicateBoard;
 using EventStorming.BoardModelling.Slices.GetBoardSnapshot;
@@ -119,6 +120,34 @@ public sealed class BoardStoreTests(MongoContainer mongo)
         (await updates.Update(board.Id, placed.Id, new ElementPatch("Stale", null, null, null, null, null, null, null, false), 2, Ana, Now, CancellationToken.None)).ShouldBeNull();
         (await updates.Update(board.Id, placed.Id, new ElementPatch(null, null, null, null, null, null, null, "#FF0000", false), 3, Ana, Now, CancellationToken.None))!.Element.Color.ShouldBe("#FF0000");
         (await updates.Update(board.Id, placed.Id, new ElementPatch(null, null, null, null, null, null, null, null, true), null, Ana, Now, CancellationToken.None))!.Element.Color.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task Deleting_a_board_removes_its_elements_and_connections_and_leaves_other_boards_alone()
+    {
+        await using var provider = await mongo.NewStores();
+        var scope = provider.CreateScope().ServiceProvider;
+        var doomed = await NewBoard(scope);
+        var kept = await NewBoard(scope);
+        var adds = scope.GetRequiredService<IAddElementsStore>();
+        foreach (var board in new[] { doomed, kept })
+        {
+            var placed = Sticky(board.Id, "Order Placed", 0, 0);
+            var paid = Sticky(board.Id, "Payment Taken", 200, 0);
+            await adds.Insert(board.Id, [placed, paid], [new Connection(Guid.NewGuid(), board.Id, placed.Id, paid.Id, null, 1, Now, Ana)], [], Ana, Now, CancellationToken.None);
+        }
+
+        var store = scope.GetRequiredService<IDeleteBoardStore>();
+        (await store.Delete(doomed.Id, CancellationToken.None)).ShouldBeTrue();
+        (await store.Delete(doomed.Id, CancellationToken.None)).ShouldBeFalse();
+
+        var snapshot = scope.GetRequiredService<IGetBoardSnapshotStore>();
+        (await snapshot.FindBoard(doomed.Id, CancellationToken.None)).ShouldBeNull();
+        (await snapshot.Elements(doomed.Id, CancellationToken.None)).ShouldBeEmpty();
+        (await snapshot.Connections(doomed.Id, CancellationToken.None)).ShouldBeEmpty();
+        (await snapshot.FindBoard(kept.Id, CancellationToken.None)).ShouldNotBeNull();
+        (await snapshot.Elements(kept.Id, CancellationToken.None)).Count.ShouldBe(2);
+        (await snapshot.Connections(kept.Id, CancellationToken.None)).ShouldHaveSingleItem();
     }
 
     [Fact]

@@ -1001,7 +1001,9 @@ package management (`Directory.Packages.props`).
 8. **Pivotal** is a flag, allowed only where `canBePivotal` is set (Domain Event).
 9. The **board level is fixed** at creation.
 10. **Public `DELETE /boards/{id}` archives** the board. `POST …/restore` undoes it. There is no hard
-    delete in the MVP.
+    delete in the MVP. *(Since added: team Owners and Editors can permanently delete a board, with all
+    its elements and connections, from the web app's dashboard - `DELETE /api/app/boards/{id}`. The
+    public API and MCP server still only archive.)*
 11. **API keys:** `write` implies `read`. The secret is shown once. Expiry is optional. Keys are
     team-scoped (a key cannot see other teams).
 12. **Idempotency keys** are optional but recommended on writes. Records are retained for 24 hours.

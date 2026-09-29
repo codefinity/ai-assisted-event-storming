@@ -3,6 +3,7 @@ using EventStorming.BoardModelling.Slices.AddConnection;
 using EventStorming.BoardModelling.Slices.AddElements;
 using EventStorming.BoardModelling.Slices.ArchiveBoard;
 using EventStorming.BoardModelling.Slices.CreateBoard;
+using EventStorming.BoardModelling.Slices.DeleteBoard;
 using EventStorming.BoardModelling.Slices.DeleteConnections;
 using EventStorming.BoardModelling.Slices.DeleteElements;
 using EventStorming.BoardModelling.Slices.DuplicateBoard;
@@ -100,6 +101,7 @@ public static class MongoDbServiceExtensions
         services.AddScoped<ArchiveBoardStore>();
         services.AddScoped<IArchiveBoardStore>(provider => provider.GetRequiredService<ArchiveBoardStore>());
         services.AddScoped<IRestoreBoardStore>(provider => provider.GetRequiredService<ArchiveBoardStore>());
+        services.AddScoped<IDeleteBoardStore, DeleteBoardStore>();
         services.AddScoped<IImportBoardDocumentStore, ImportBoardDocumentStore>();
         services.AddScoped<IAddElementsStore, AddElementsStore>();
         services.AddScoped<UpdateElementStore>();

@@ -27,8 +27,8 @@ namespace EventStorming.Specs.Features.BoardModelling
         private static string[] featureTags = ((string[])(null));
         
         private static global::Reqnroll.FeatureInfo featureInfo = new global::Reqnroll.FeatureInfo(new global::System.Globalization.CultureInfo("en-US"), "Features/BoardModelling", "The board catalog", "  A team\'s dashboard lists its boards. Owners and Editors create, rename, duplica" +
-                "te, archive and\r\n  restore them; Viewers can only look. A board\'s level is chose" +
-                "n when it is created.", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags, InitializeCucumberMessages());
+                "te, archive,\r\n  restore and delete them; Viewers can only look. A board\'s level " +
+                "is chosen when it is created.", global::Reqnroll.ProgrammingLanguage.CSharp, featureTags, InitializeCucumberMessages());
         
 #line 1 "BoardCatalog.feature"
 #line hidden
@@ -122,7 +122,7 @@ namespace EventStorming.Specs.Features.BoardModelling
         
         private static global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages InitializeCucumberMessages()
         {
-            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/BoardModelling/BoardCatalog.feature.ndjson", 17);
+            return new global::Reqnroll.Formatters.RuntimeSupport.FeatureLevelCucumberMessages("Features/BoardModelling/BoardCatalog.feature.ndjson", 22);
         }
         
         async System.Threading.Tasks.ValueTask Xunit.IAsyncLifetime.InitializeAsync()
@@ -619,18 +619,18 @@ namespace EventStorming.Specs.Features.BoardModelling
             await this.ScenarioCleanupAsync();
         }
         
-        [global::Xunit.FactAttribute(DisplayName="Members open a board with the permission their role gives them")]
+        [global::Xunit.FactAttribute(DisplayName="Deleting a board removes everything on it and closes it for everyone")]
         [global::Xunit.TraitAttribute("FeatureTitle", "The board catalog")]
-        [global::Xunit.TraitAttribute("Description", "Members open a board with the permission their role gives them")]
-        public async global::System.Threading.Tasks.Task MembersOpenABoardWithThePermissionTheirRoleGivesThem()
+        [global::Xunit.TraitAttribute("Description", "Deleting a board removes everything on it and closes it for everyone")]
+        public async global::System.Threading.Tasks.Task DeletingABoardRemovesEverythingOnItAndClosesItForEveryone()
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
             string pickleIndex = "13";
-            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Members open a board with the permission their role gives them", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Deleting a board removes everything on it and closes it for everyone", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
-            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Open a board", null, tagsOfRule);
-#line 101
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Delete a board", null, tagsOfRule);
+#line 109
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -644,21 +644,353 @@ namespace EventStorming.Specs.Features.BoardModelling
   await this.FeatureBackgroundAsync();
 #line hidden
 #line 102
-      await testRunner.GivenAsync("\"Food delivery\" has a \"big-picture\" board called \"Whole business\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+      await testRunner.GivenAsync("\"Food delivery\" has a \"big-picture\" board called \"Draft\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
 #line hidden
+                global::Reqnroll.Table table4 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y"});
+                table4.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "100",
+                            "40"});
+                table4.AddRow(new string[] {
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "300",
+                            "40"});
 #line 103
-      await testRunner.WhenAsync("Bo opens the board \"Whole business\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
-#line hidden
-#line 104
-      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
-#line hidden
-#line 105
-      await testRunner.AndAsync("they can view the board", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
-#line hidden
-#line 106
-      await testRunner.WhenAsync("Ana looks up the board \"Whole business\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+      await testRunner.AndAsync("the board \"Draft\" has these elements:", ((string)(null)), table4, "And ");
 #line hidden
 #line 107
+      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 110
+      await testRunner.GivenAsync("\"Food delivery\" has a \"big-picture\" board called \"Keeper\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+#line 111
+      await testRunner.WhenAsync("Ana deletes the board \"Draft\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 112
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 113
+      await testRunner.AndAsync("the board \"Draft\" and everything on it is gone", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 114
+      await testRunner.AndAsync("the deletion is announced to everyone on the board", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 115
+      await testRunner.AndAsync("the board \"Keeper\" still has 0 elements", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="An archived board can be deleted")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "The board catalog")]
+        [global::Xunit.TraitAttribute("Description", "An archived board can be deleted")]
+        public async global::System.Threading.Tasks.Task AnArchivedBoardCanBeDeleted()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "14";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("An archived board can be deleted", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Delete a board", null, tagsOfRule);
+#line 117
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 102
+      await testRunner.GivenAsync("\"Food delivery\" has a \"big-picture\" board called \"Draft\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+                global::Reqnroll.Table table5 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y"});
+                table5.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "100",
+                            "40"});
+                table5.AddRow(new string[] {
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "300",
+                            "40"});
+#line 103
+      await testRunner.AndAsync("the board \"Draft\" has these elements:", ((string)(null)), table5, "And ");
+#line hidden
+#line 107
+      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 118
+      await testRunner.GivenAsync("the board \"Draft\" is archived", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+#line 119
+      await testRunner.WhenAsync("Ana deletes the board \"Draft\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 120
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 121
+      await testRunner.AndAsync("the board \"Draft\" and everything on it is gone", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Viewers cannot delete a board")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "The board catalog")]
+        [global::Xunit.TraitAttribute("Description", "Viewers cannot delete a board")]
+        public async global::System.Threading.Tasks.Task ViewersCannotDeleteABoard()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "15";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Viewers cannot delete a board", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Delete a board", null, tagsOfRule);
+#line 123
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 102
+      await testRunner.GivenAsync("\"Food delivery\" has a \"big-picture\" board called \"Draft\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+                global::Reqnroll.Table table6 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y"});
+                table6.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "100",
+                            "40"});
+                table6.AddRow(new string[] {
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "300",
+                            "40"});
+#line 103
+      await testRunner.AndAsync("the board \"Draft\" has these elements:", ((string)(null)), table6, "And ");
+#line hidden
+#line 107
+      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 124
+      await testRunner.WhenAsync("Bo deletes the board \"Draft\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 125
+      await testRunner.ThenAsync("the request is refused as \"forbidden\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 126
+      await testRunner.AndAsync("the board \"Draft\" still has 2 elements", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Outsiders cannot even tell the board exists")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "The board catalog")]
+        [global::Xunit.TraitAttribute("Description", "Outsiders cannot even tell the board exists")]
+        public async global::System.Threading.Tasks.Task OutsidersCannotEvenTellTheBoardExists()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "16";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Outsiders cannot even tell the board exists", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Delete a board", null, tagsOfRule);
+#line 128
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 102
+      await testRunner.GivenAsync("\"Food delivery\" has a \"big-picture\" board called \"Draft\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+                global::Reqnroll.Table table7 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y"});
+                table7.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "100",
+                            "40"});
+                table7.AddRow(new string[] {
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "300",
+                            "40"});
+#line 103
+      await testRunner.AndAsync("the board \"Draft\" has these elements:", ((string)(null)), table7, "And ");
+#line hidden
+#line 107
+      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 129
+      await testRunner.GivenAsync("Cy has an account", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+#line 130
+      await testRunner.WhenAsync("Cy deletes the board \"Draft\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 131
+      await testRunner.ThenAsync("the request is refused as \"not-found\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 132
+      await testRunner.AndAsync("the board \"Draft\" still has 2 elements", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="A board that does not exist cannot be deleted")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "The board catalog")]
+        [global::Xunit.TraitAttribute("Description", "A board that does not exist cannot be deleted")]
+        public async global::System.Threading.Tasks.Task ABoardThatDoesNotExistCannotBeDeleted()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "17";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("A board that does not exist cannot be deleted", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Delete a board", null, tagsOfRule);
+#line 134
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 102
+      await testRunner.GivenAsync("\"Food delivery\" has a \"big-picture\" board called \"Draft\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+                global::Reqnroll.Table table8 = new global::Reqnroll.Table(new string[] {
+                            "key",
+                            "type",
+                            "text",
+                            "x",
+                            "y"});
+                table8.AddRow(new string[] {
+                            "placed",
+                            "domain-event",
+                            "Order Placed",
+                            "100",
+                            "40"});
+                table8.AddRow(new string[] {
+                            "paid",
+                            "domain-event",
+                            "Payment Taken",
+                            "300",
+                            "40"});
+#line 103
+      await testRunner.AndAsync("the board \"Draft\" has these elements:", ((string)(null)), table8, "And ");
+#line hidden
+#line 107
+      await testRunner.AndAsync("\"placed\" is connected to \"paid\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 135
+      await testRunner.WhenAsync("Ana deletes a board that does not exist", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 136
+      await testRunner.ThenAsync("the request is refused as \"not-found\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+            }
+            await this.ScenarioCleanupAsync();
+        }
+        
+        [global::Xunit.FactAttribute(DisplayName="Members open a board with the permission their role gives them")]
+        [global::Xunit.TraitAttribute("FeatureTitle", "The board catalog")]
+        [global::Xunit.TraitAttribute("Description", "Members open a board with the permission their role gives them")]
+        public async global::System.Threading.Tasks.Task MembersOpenABoardWithThePermissionTheirRoleGivesThem()
+        {
+            string[] tagsOfScenario = ((string[])(null));
+            global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
+            string pickleIndex = "18";
+            global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Members open a board with the permission their role gives them", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
+            string[] tagsOfRule = ((string[])(null));
+            global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("Open a board", null, tagsOfRule);
+#line 140
+    this.ScenarioInitialize(scenarioInfo, ruleInfo);
+#line hidden
+            if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
+            {
+                await testRunner.SkipScenarioAsync();
+            }
+            else
+            {
+                await this.ScenarioStartAsync();
+#line 5
+  await this.FeatureBackgroundAsync();
+#line hidden
+#line 141
+      await testRunner.GivenAsync("\"Food delivery\" has a \"big-picture\" board called \"Whole business\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "Given ");
+#line hidden
+#line 142
+      await testRunner.WhenAsync("Bo opens the board \"Whole business\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 143
+      await testRunner.ThenAsync("the request succeeds", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
+#line hidden
+#line 144
+      await testRunner.AndAsync("they can view the board", ((string)(null)), ((global::Reqnroll.Table)(null)), "And ");
+#line hidden
+#line 145
+      await testRunner.WhenAsync("Ana looks up the board \"Whole business\"", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
+#line hidden
+#line 146
       await testRunner.ThenAsync("they can edit the board", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }
@@ -672,11 +1004,11 @@ namespace EventStorming.Specs.Features.BoardModelling
         {
             string[] tagsOfScenario = ((string[])(null));
             global::System.Collections.Specialized.OrderedDictionary argumentsOfScenario = new global::System.Collections.Specialized.OrderedDictionary();
-            string pickleIndex = "14";
+            string pickleIndex = "19";
             global::Reqnroll.ScenarioInfo scenarioInfo = new global::Reqnroll.ScenarioInfo("Everyone can read the element types and levels", null, tagsOfScenario, argumentsOfScenario, featureTags, pickleIndex);
             string[] tagsOfRule = ((string[])(null));
             global::Reqnroll.RuleInfo ruleInfo = new global::Reqnroll.RuleInfo("The notation", null, tagsOfRule);
-#line 111
+#line 150
     this.ScenarioInitialize(scenarioInfo, ruleInfo);
 #line hidden
             if ((global::Reqnroll.TagHelper.ContainsIgnoreTag(scenarioInfo.CombinedTags) || global::Reqnroll.TagHelper.ContainsIgnoreTag(featureTags)))
@@ -689,10 +1021,10 @@ namespace EventStorming.Specs.Features.BoardModelling
 #line 5
   await this.FeatureBackgroundAsync();
 #line hidden
-#line 112
+#line 151
       await testRunner.WhenAsync("Ana asks for the element types", ((string)(null)), ((global::Reqnroll.Table)(null)), "When ");
 #line hidden
-#line 113
+#line 152
       await testRunner.ThenAsync("the notation lists 11 element types and 3 levels", ((string)(null)), ((global::Reqnroll.Table)(null)), "Then ");
 #line hidden
             }

@@ -2,6 +2,7 @@ using EventStorming.Api.Rest.Http;
 using EventStorming.BoardModelling.Model;
 using EventStorming.BoardModelling.Slices.ArchiveBoard;
 using EventStorming.BoardModelling.Slices.CreateBoard;
+using EventStorming.BoardModelling.Slices.DeleteBoard;
 using EventStorming.BoardModelling.Slices.DuplicateBoard;
 using EventStorming.BoardModelling.Slices.ExportBoardDocument;
 using EventStorming.BoardModelling.Slices.GetBoardSnapshot;
@@ -137,6 +138,14 @@ internal static class BoardEndpoints
                 return result.Success ? TypedResults.Ok(BoardResponse.From(result.Board!)) : Problems.From(result, http);
             })
             .WithName("RestoreTeamBoard").WithSummary("Bring an archived board back");
+
+        boards.MapDelete("/boards/{boardId:guid}", async Task<Results<NoContent, ProblemHttpResult>> (
+                Guid boardId, IDeleteBoardCommandHandler handler, HttpContext http, CancellationToken cancellationToken) =>
+            {
+                var result = await handler.Handle(new DeleteBoardCommand(Actors.From(http.User), boardId), cancellationToken);
+                return result.Success ? TypedResults.NoContent() : Problems.From(result, http);
+            })
+            .WithName("DeleteTeamBoard").WithSummary("Delete a board and all of its content, permanently");
 
         boards.MapGet("/boards/{boardId:guid}/document", async Task<Results<Ok<ExportedDocumentDto>, ProblemHttpResult>> (
                 Guid boardId, IExportBoardDocumentQueryHandler handler, HttpContext http, CancellationToken cancellationToken) =>

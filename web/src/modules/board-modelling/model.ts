@@ -78,6 +78,11 @@ export interface BoardReplaced {
   actor: ActorRef;
 }
 
+export interface BoardDeleted {
+  boardId: string;
+  actor: ActorRef;
+}
+
 export interface BoardDetails {
   boardId: string;
   name: string;

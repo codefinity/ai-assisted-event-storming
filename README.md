@@ -13,7 +13,7 @@ changes appear live.
   - double-click to quick-add; drag from the palette;
   - multi-select, copy/paste (including between boards, or lines of text as events), and per-person undo/redo;
   - search and filter, a legend, and keyboard shortcuts (`?`).
-- **Teams:** accounts, teams with Owner / Editor / Viewer roles, and invitations by link or email. A dashboard to create, rename, duplicate, archive and restore boards.
+- **Teams:** accounts, teams with Owner / Editor / Viewer roles, and invitations by link or email. A dashboard to create, rename, duplicate, archive, restore and permanently delete boards.
 - **Import and export** a board as JSON (the Board Document), or export it as an SVG image.
 - **Public API** (`/api/v1`):
   - API keys with scopes;
